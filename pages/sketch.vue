@@ -1,41 +1,41 @@
 <template>
-  <div>
-    <div ref="canvas"></div>
-  </div>
+  <div class="sketch" ref="sketchContainer"></div>
 </template>
 
-<script sketch>
-import * as p5 from "p5";
+<script setup>
+import p5 from "p5";
 
-export default {
-  setup() {
-    const canvas = ref(null);
-    const sketch = ref(null);
+let sketchContainer = ref(null);
+let sketchInstance;
 
-    onMounted(() => {
-      sketch.value = new p5((p) => {
-        p.setup = () => {
-          canvas.value = p.createCanvas(400, 400);
-        };
-
-        p.draw = () => {
-          p.background(0);
-          p.fill(255);
-          p.ellipse(p.width / 2, p.height / 2, 50, 50);
-        };
-      });
-    });
-
-    onBeforeUnmount(() => {
-      sketch.value.remove();
-    });
-
-    return {
-      canvas,
-      sketch,
+const setupSketch = () => {
+  sketchInstance = new p5((sketch) => {
+    sketch.setup = () => {
+      const { clientWidth, clientHeight } = sketchContainer.value;
+      sketch
+        .createCanvas(clientWidth, clientHeight)
+        .parent(sketchContainer.value);
     };
-  },
+
+    sketch.draw = () => {
+      sketch.background(220);
+      sketch.ellipse(sketch.width / 2, sketch.height / 2, 200, 200);
+    };
+  }, sketchContainer.value);
 };
+
+onMounted(async () => {
+  setupSketch();
+});
 </script>
 
-<style lang="scss" scoped></style>
+<style scoped>
+.sketch {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+}
+</style>
