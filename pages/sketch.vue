@@ -11,14 +11,19 @@ let gyroZ = ref(0);
 let gyroW = ref(0);
 
 let x, y, z;
+let pg;
+let osc;
+let udp;
 
 const fetchOSC = async () => {
-  oscData.value = await $fetch("/api/osc");
-  gyroX.value = oscData.value.oscData.args[0];
-  gyroY.value = oscData.value.oscData.args[1];
-  gyroZ.value = oscData.value.oscData.args[2];
-  gyroW.value = oscData.value.oscData.args[3];
-  console.log(gyroX.value, gyroY.value, gyroZ.value, gyroW.value);
+  try {
+    oscData.value = await $fetch("/api/osc");
+    gyroX.value = oscData.value.oscData.args[0];
+    gyroY.value = oscData.value.oscData.args[1];
+    gyroZ.value = oscData.value.oscData.args[2];
+    gyroW.value = oscData.value.oscData.args[3];
+    console.log(gyroX.value, gyroY.value, gyroZ.value, gyroW.value);
+  } catch (e) {}
 };
 
 let sketchContainer = ref(null);

@@ -2,7 +2,8 @@
 export default defineNuxtConfig({
   devtools: { enabled: true },
   ssr: false,
-  // serverMiddleware: [{ path: "/api/osc", handler: "~/server/api/osc.js" }],
+  serverMiddleware: ["~/server/middleware/oscServer"],
+
   // server: {
   //   requireMiddleware: ["esm"],
   // },
