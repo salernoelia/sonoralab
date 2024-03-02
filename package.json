@@ -13,10 +13,12 @@
   "devDependencies": {
     "@nuxt/devtools": "latest",
     "nuxt": "^3.8.2",
+    "sass": "^1.71.1",
     "vue": "^3.3.8",
     "vue-router": "^4.2.5"
   },
   "dependencies": {
+    "@nuxtjs/supabase": "^1.1.6",
     "@pinia/nuxt": "^0.5.1",
     "cors": "^2.8.5",
     "esm": "^3.2.25",
@@ -25,6 +27,7 @@
     "osc": "^2.4.4",
     "p5": "^1.9.1",
     "pinia": "^2.1.7",
+    "supabase": "^1.145.4",
     "ws": "^8.16.0"
   }
 }

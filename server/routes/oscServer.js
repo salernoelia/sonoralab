@@ -1,4 +1,4 @@
-import { Client, Server } from "node-osc";
+import { Server } from "node-osc";
 import { WebSocketServer } from "ws";
 
 const oscServer = new Server(50001, "0.0.0.0", () => {

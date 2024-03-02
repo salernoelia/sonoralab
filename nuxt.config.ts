@@ -8,4 +8,5 @@ export default defineNuxtConfig({
   //   requireMiddleware: ["esm"],
   // },
   modules: ["@pinia/nuxt"],
+  override: true,
 });
