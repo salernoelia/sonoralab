@@ -14,23 +14,9 @@ socket.onopen = function (e) {
 };
 
 socket.onmessage = function (event) {
-  // const parsedData = JSON.parse(event.toString()); // Parse JSON string into object
-  // oscData.value = parsedData;
   console.log("Received message:", event);
-  return (oscData.value = event.data);
+  return (oscData.value = JSON.parse(event.data));
 };
-// ws.on("open", function () {
-//   console.log("Connected to WebSocket server");
-// });
-
-// ws.on("message", function (data) {
-//   const parsedData = JSON.parse(data.toString()); // Parse JSON string into object
-//   console.log("Received message:", parsedData);
-// });
-
-// onUnmounted(() => {
-//   socket.close();
-// });
 </script>
 
 <style lang="scss" scoped></style>

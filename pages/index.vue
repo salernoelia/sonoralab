@@ -9,13 +9,14 @@
 <script setup>
 let oscData = ref();
 
-const fetchOSC = async () => {
-  oscData.value = await $fetch("/api/osc");
+const socket = new WebSocket("ws://localhost:8080");
+
+socket.onopen = function (e) {
+  console.log("Connected to WebSocket server", e);
 };
 
-// Fetch data initially when the component is mounted
-onMounted(fetchOSC);
-
-// Set up an interval to fetch data every second
-const timer = setInterval(fetchOSC, 50);
+socket.onmessage = function (event) {
+  console.log("Received message:", event);
+  return (oscData.value = JSON.parse(event.data));
+};
 </script>
