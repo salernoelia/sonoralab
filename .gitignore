@@ -24,4 +24,4 @@ logs
 !.env.example
 
 # Build files
-composables/useSupabaseClient.js
+useSupabaseClient.js
