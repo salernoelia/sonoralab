@@ -94,8 +94,8 @@ const setupSketch = () => {
 
     s.pen = () => {
       s.pg.stroke(0, 0, 0, 255);
-      // s.ellipse(s.gyrX, s.gyrY, 50);
-      s.pg.strokeWeight(1);
+      // Use the average of accX and accY to control the stroke weight
+      s.pg.strokeWeight((s.accX + s.accY) / 2);
       s.pg.line(s.gyrX, s.gyrY, s.previousX, s.previousY);
     };
 
