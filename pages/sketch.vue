@@ -5,7 +5,7 @@
         fullscreen (doesnt work yet)
       </button>
       <button class="button" @click="saveSketch">save</button>
-      <input type="file" @change="uploadSketch" />
+      <!-- <input type="file" @change="uploadSketch" /> -->
     </div>
   </div>
 </template>
@@ -14,7 +14,7 @@
 import p5 from "p5";
 
 const supabase = usSupabaseClient();
-const images = ref([]);
+let sketchList = ref([]);
 
 let oscData = ref();
 let gyroX = ref(0);
@@ -29,15 +29,6 @@ let x, y, z;
 let pg;
 let osc;
 let udp;
-
-async function uploadSketch() {
-  const sketchFile = document.querySelector('input[type="file"]').files[0];
-  const { data, error } = await supabase.storage
-    .from("doodles")
-    .upload(sketchFile.name, sketchFile); // Use avatarFile.name as the file name
-
-  console.log(data, error);
-}
 
 const socket = new WebSocket("ws://localhost:8080");
 
@@ -149,11 +140,30 @@ const saveSketch = async () => {
   if (sketchInstance) {
     await sketchInstance.save();
     setTimeout(async () => {
-      const sketchList = await $fetch("api/fetchLocalSketch");
-      console.log(sketchList);
+      try {
+        const sketchList = await $fetch("api/fetchLocalSketch");
+        if (sketchList && sketchList.files && sketchList.files.length > 0) {
+          const firstFile = sketchList.files[0];
+          const fullPath = `/Users/eliasalerno/Downloads/${firstFile}`; // Construct the full path
+          console.log(fullPath);
+          uploadSketch(firstFile, fullPath); // Pass the full path to uploadSketch
+        } else {
+          console.error("No files found in sketchList");
+        }
+      } catch (error) {
+        console.error("Error fetching sketchList:", error);
+      }
     }, 200);
   }
 };
+
+async function uploadSketch(sketchname, sketchpath) {
+  const { data, error } = await supabase.storage
+    .from("doodles")
+    .upload(sketchname, `"${sketchpath}"`);
+
+  console.log(sketchname, sketchpath, error);
+}
 
 onMounted(async () => {
   setupSketch();
