@@ -97,12 +97,12 @@ const setupSketch = () => {
       s.createCanvas(clientWidth, clientHeight).parent(sketchContainer.value);
       s.pg = s.createGraphics(s.width, s.height);
       s.background(255);
-      s.pg.background(255);
       s.noStroke();
       s.previousX = null;
       s.previousY = null;
-      s.save = () => {
-        s.pg.save("mySketch.png");
+      s.save = async () => {
+        await s.pg.save("mySketch.png");
+        s.pg.background(255);
       };
     };
 
@@ -145,9 +145,13 @@ const setupSketch = () => {
   });
 };
 
-const saveSketch = () => {
+const saveSketch = async () => {
   if (sketchInstance) {
-    sketchInstance.save();
+    await sketchInstance.save();
+    setTimeout(async () => {
+      const sketchList = await $fetch("api/fetchLocalSketch");
+      console.log(sketchList);
+    }, 200);
   }
 };
 

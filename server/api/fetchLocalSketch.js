@@ -21,7 +21,7 @@ export default defineEventHandler((event) => {
           modifiedTime: stats.mtime.getTime(),
         };
       })
-      .sort((a, b) => a.modifiedTime - b.modifiedTime);
+      .sort((b, a) => a.modifiedTime - b.modifiedTime);
 
     // Extract just the names of the sorted files
     const sortedFileNames = sortedFiles.map((file) => file.name);
