@@ -2,7 +2,7 @@
   <div class="sketch" ref="sketchContainer">
     <div class="buttonContainer">
       <button class="button" @click="fullscreen()">fullscreen</button>
-      <button class="button" @click="save()">save</button>
+      <button class="button" @click="saveSketch">save</button>
     </div>
   </div>
 </template>
@@ -82,9 +82,13 @@ const setupSketch = () => {
       s.createCanvas(clientWidth, clientHeight).parent(sketchContainer.value);
       s.pg = s.createGraphics(s.width, s.height);
       s.background(255);
+      s.pg.background(255);
       s.noStroke();
       s.previousX = null;
       s.previousY = null;
+      s.save = () => {
+        s.pg.save("mySketch.png");
+      };
     };
 
     s.draw = () => {
@@ -124,6 +128,12 @@ const setupSketch = () => {
       s.resizeCanvas(clientWidth, clientHeight);
     };
   });
+};
+
+const saveSketch = () => {
+  if (sketchInstance) {
+    sketchInstance.save();
+  }
 };
 
 onMounted(async () => {
