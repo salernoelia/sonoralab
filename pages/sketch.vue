@@ -66,6 +66,11 @@ let sketchInstance;
 
 const setupSketch = () => {
   sketchInstance = new p5((s) => {
+    // Define variables for smoothing
+    const smoothingFactor = 0.1; // Adjust this value for more or less smoothing
+    let smoothedX = 0;
+    let smoothedY = 0;
+
     s.setup = () => {
       const { clientWidth, clientHeight } = sketchContainer.value;
       s.createCanvas(clientWidth, clientHeight).parent(sketchContainer.value);
@@ -77,18 +82,27 @@ const setupSketch = () => {
     };
 
     s.draw = () => {
-      s.gyrX = s.map(-gyroX.value, -1, 1, 0, s.width);
-      s.gyrY = s.map(gyroY.value, -1, 1, 0, s.height);
+      // Smooth the gyro data
+      smoothedX = s.lerp(
+        smoothedX,
+        s.map(-gyroX.value, -1, 1, 0, s.width),
+        smoothingFactor
+      );
+      smoothedY = s.lerp(
+        smoothedY,
+        s.map(gyroY.value, -1, 1, 0, s.height),
+        smoothingFactor
+      );
 
-      s.accX = s.map(accelX.value, 0, 1, 0, 10);
-      s.accY = s.map(accelY.value, 0, 1, 0, 10);
+      s.accX = s.map(accelX.value, 0, 1, 0, 1);
+      s.accY = s.map(accelY.value, 0, 1, 0, 1);
 
       s.fill(0);
       if (s.previousX !== null && s.previousY !== null) {
         s.pen();
       }
-      s.previousX = s.gyrX;
-      s.previousY = s.gyrY;
+      s.previousX = smoothedX;
+      s.previousY = smoothedY;
       s.image(s.pg, 0, 0); // Display the pg graphics on the canvas
     };
 
@@ -96,7 +110,7 @@ const setupSketch = () => {
       s.pg.stroke(0, 0, 0, 255);
       // Use the average of accX and accY to control the stroke weight
       s.pg.strokeWeight((s.accX + s.accY) / 2);
-      s.pg.line(s.gyrX, s.gyrY, s.previousX, s.previousY);
+      s.pg.line(smoothedX, smoothedY, s.previousX, s.previousY);
     };
 
     s.windowResized = () => {
