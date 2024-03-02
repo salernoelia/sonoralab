@@ -12,11 +12,6 @@
 
 <script setup>
 import p5 from "p5";
-import { useStore } from "~/store/useStore";
-
-let store = useStore();
-
-console.log(store.path);
 
 const supabase = usSupabaseClient();
 let sketchList = ref([]);
@@ -149,7 +144,7 @@ const saveSketch = async () => {
         const sketchList = await $fetch("api/fetchLocalSketch");
         if (sketchList && sketchList.files && sketchList.files.length > 0) {
           const firstFile = sketchList.files[0];
-          const fullPath = `${store.path}${firstFile}`; // Construct the full path
+          const fullPath = `/Users/eliasalerno/Downloads/${firstFile}`; // Construct the full path
           console.log(fullPath);
           uploadSketch(firstFile, fullPath); // Pass the full path to uploadSketch
         } else {
@@ -166,6 +161,12 @@ async function uploadSketch(sketchname, sketchpath) {
   const { data, error } = await supabase.storage
     .from("doodles")
     .upload(sketchname, `"${sketchpath}"`);
+
+  // const { data2, error2 } = await supabase.from("doodles").insert([
+  //   {
+  //     name: sketchname,
+  //   },
+  // ]);
 
   console.log(sketchname, sketchpath, error);
 }

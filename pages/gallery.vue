@@ -3,8 +3,13 @@
     <h1>Sketches from Installation</h1>
     <div>
       <div class="gallery">
-        <div v-for="image in images" :key="image.id" class="image-container">
+        <div
+          v-for="image in imagesWithMetadata"
+          :key="image.id"
+          class="image-container"
+        >
           <img :src="image.url.data.publicUrl" alt="Doodle" />
+          <p>{{ image.metadata }}</p>
         </div>
       </div>
     </div>
@@ -13,28 +18,47 @@
 
 <script setup>
 const supabase = usSupabaseClient();
-const images = ref([]);
+const imagesWithMetadata = ref([]);
 
 // Fetch list of objects (images) in the avatars bucket
 async function fetchImages() {
   try {
     console.log("Fetching images...");
-    const { data, error } = await supabase.storage.from("doodles").list();
-    if (error) {
-      console.error("Error fetching images:", error.message);
+    const { data: images, error } = await supabase.storage
+      .from("doodles")
+      .list();
+    const { data: metadata, error: metaError } = await supabase
+      .from("doodlesMeta")
+      .select("*");
+    if (error || metaError) {
+      console.error(
+        "Error fetching images:",
+        error?.message || metaError?.message
+      );
     } else {
-      // Map each image metadata to include its URL
-      images.value = data.map((image) => ({
-        ...image,
-        url: supabase.storage.from("doodles").getPublicUrl(image.name),
-      }));
+      // Combine image data with metadata
+      imagesWithMetadata.value = images.map((image) => {
+        const metadataItem = metadata.find((item) => item.name === image.name);
+        return {
+          ...image,
+          metadata: metadataItem,
+          url: supabase.storage.from("doodles").getPublicUrl(image.name),
+        };
+      });
     }
   } catch (error) {
-    console.error("Error fetching images:", error);
+    console.error("Error fetching images:", error.message);
   }
 }
 
+// Fetch images on component mount
+onMounted(fetchImages);
+
+// Fetch images periodically
 const timer = setInterval(fetchImages, 1000);
+
+// Clear interval on component unmount
+onUnmounted(() => clearInterval(timer));
 </script>
 
 <style lang="scss" scoped>

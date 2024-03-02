@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 
-export const useStore = defineStore("store", {
+export const store = defineStore("store", {
   state: () => {
     return {
       path: "/Users/eliasalerno/Downloads/",
