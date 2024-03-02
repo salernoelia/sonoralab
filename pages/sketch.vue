@@ -1,5 +1,10 @@
 <template>
-  <div class="sketch" ref="sketchContainer"></div>
+  <div class="sketch" ref="sketchContainer">
+    <div class="buttonContainer">
+      <button class="button" @click="fullscreen()">fullscreen</button>
+      <button class="button" @click="save()">save</button>
+    </div>
+  </div>
 </template>
 
 <script setup>
@@ -67,12 +72,13 @@ let sketchInstance;
 const setupSketch = () => {
   sketchInstance = new p5((s) => {
     // Define variables for smoothing
+    const { clientWidth, clientHeight } = sketchContainer.value;
+
     const smoothingFactor = 0.1; // Adjust this value for more or less smoothing
-    let smoothedX = 0;
-    let smoothedY = 0;
+    let smoothedX = clientWidth / 2;
+    let smoothedY = clientHeight / 2;
 
     s.setup = () => {
-      const { clientWidth, clientHeight } = sketchContainer.value;
       s.createCanvas(clientWidth, clientHeight).parent(sketchContainer.value);
       s.pg = s.createGraphics(s.width, s.height);
       s.background(255);
@@ -132,6 +138,15 @@ onMounted(async () => {
   left: 0;
   z-index: 1;
   width: 100%;
+  height: 100%;
+}
+.buttonContainer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
   height: 100%;
 }
 </style>
