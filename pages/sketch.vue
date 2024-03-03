@@ -88,11 +88,12 @@ const setupSketch = () => {
       s.createCanvas(clientWidth, clientHeight).parent(sketchContainer.value);
       s.pg = s.createGraphics(s.width, s.height);
       s.background(255);
+      s.pg.background(255);
       s.noStroke();
       s.previousX = null;
       s.previousY = null;
       s.save = async () => {
-        await s.pg.save("mySketch.png");
+        await s.pg.save("sketch.jpg");
         s.pg.background(255);
       };
     };
@@ -144,9 +145,23 @@ const saveSketch = async () => {
         const sketchList = await $fetch("api/fetchLocalSketch");
         if (sketchList && sketchList.files && sketchList.files.length > 0) {
           const firstFile = sketchList.files[0];
-          const fullPath = `/Users/eliasalerno/Downloads/${firstFile}`; // Construct the full path
-          console.log(fullPath);
-          uploadSketch(firstFile, fullPath); // Pass the full path to uploadSketch
+          const readFile = sketchList.readFile;
+          const fullPath = sketchList.fullFilePath;
+          const base64 = sketchList.base64;
+          const byteCharacters = atob(base64);
+          const byteNumbers = new Array(byteCharacters.length);
+          for (let i = 0; i < byteCharacters.length; i++) {
+            byteNumbers[i] = byteCharacters.charCodeAt(i);
+          }
+          const byteArray = new Uint8Array(byteNumbers);
+          const blob = new Blob([byteArray], { type: "image/jpeg" });
+
+          console.log("frontend blob file:", blob);
+          // const decodedFile = sketchlist.decodedFile;
+          // console.log("first sketch", sketchList.files[0]);
+          // const fullPath = `/Users/eliasalerno/Downloads/${firstFile}`; // Construct the full path
+          // console.log(fullPath);
+          uploadSketch(firstFile, blob);
         } else {
           console.error("No files found in sketchList");
         }
@@ -157,19 +172,27 @@ const saveSketch = async () => {
   }
 };
 
-async function uploadSketch(sketchname, sketchpath) {
+async function uploadSketch(sketchname, blob) {
   const { data, error } = await supabase.storage
-    .from("doodles")
-    .upload(sketchname, `"${sketchpath}"`);
+    .from("sketches")
+    .upload(sketchname, blob);
 
-  // const { data2, error2 } = await supabase.from("doodles").insert([
-  //   {
-  //     name: sketchname,
-  //   },
-  // ]);
-
-  console.log(sketchname, sketchpath, error);
+  console.log(sketchname, error);
 }
+
+// async function uploadSketch(sketchname, sketchpath, readFile) {
+//   const { data, error } = await supabase.storage
+//     .from("sketches")
+//     .upload(sketchname, sketchpath);
+
+//   // const { data2, error2 } = await supabase.from("doodles").insert([
+//   //   {
+//   //     name: sketchname,
+//   //   },
+//   // ]);
+
+//   console.log(sketchname, sketchpath, error);
+// }
 
 onMounted(async () => {
   setupSketch();

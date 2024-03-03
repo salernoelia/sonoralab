@@ -20,6 +20,7 @@
   "dependencies": {
     "@nuxtjs/supabase": "^1.1.6",
     "@pinia/nuxt": "^0.5.1",
+    "base64-arraybuffer": "^1.0.2",
     "cors": "^2.8.5",
     "esm": "^3.2.25",
     "express": "^4.18.3",

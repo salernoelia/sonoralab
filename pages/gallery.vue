@@ -8,7 +8,7 @@
           :key="image.id"
           class="image-container"
         >
-          <img :src="image.url.data.publicUrl" alt="Doodle" />
+          <img :src="image.url" alt="Doodle" />
           <p>{{ image.metadata }}</p>
         </div>
       </div>
@@ -25,7 +25,7 @@ async function fetchImages() {
   try {
     console.log("Fetching images...");
     const { data: images, error } = await supabase.storage
-      .from("doodles")
+      .from("sketches")
       .list();
     const { data: metadata, error: metaError } = await supabase
       .from("doodlesMeta")
@@ -37,12 +37,13 @@ async function fetchImages() {
       );
     } else {
       // Combine image data with metadata
+
       imagesWithMetadata.value = images.map((image) => {
         const metadataItem = metadata.find((item) => item.name === image.name);
         return {
           ...image,
           metadata: metadataItem,
-          url: supabase.storage.from("doodles").getPublicUrl(image.name),
+          url: supabase.storage.from("sketches").getPublicUrl(image.name),
         };
       });
     }

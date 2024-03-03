@@ -25,10 +25,15 @@ export default defineEventHandler((event) => {
 
     // Extract just the names of the sorted files
     const sortedFileNames = sortedFiles.map((file) => file.name);
-
+    const fullFilePath = downloadsFolderPath + sortedFileNames[0];
+    const readFile = fs.readFileSync(fullFilePath);
+    const base64 = readFile.toString("base64");
     // Return the sorted list of files
     return {
       files: sortedFileNames,
+      readFile: readFile,
+      fullFilePath,
+      base64,
     };
   } catch (error) {
     // If there's an error reading the folder, return the error message
