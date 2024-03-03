@@ -28,7 +28,7 @@ async function fetchImages() {
       .from("sketches")
       .list();
     const { data: metadata, error: metaError } = await supabase
-      .from("doodlesMeta")
+      .from("sketchesMeta")
       .select("*");
     if (error || metaError) {
       console.error(

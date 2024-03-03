@@ -177,6 +177,12 @@ async function uploadSketch(sketchname, blob) {
     .from("sketches")
     .upload(sketchname, blob);
 
+  const { meta, err } = await supabase.from("sketchesMeta").insert([
+    {
+      name: sketchname,
+    },
+  ]);
+
   console.log(sketchname, error);
 }
 
@@ -185,11 +191,11 @@ async function uploadSketch(sketchname, blob) {
 //     .from("sketches")
 //     .upload(sketchname, sketchpath);
 
-//   // const { data2, error2 } = await supabase.from("doodles").insert([
-//   //   {
-//   //     name: sketchname,
-//   //   },
-//   // ]);
+// const { data2, error2 } = await supabase.from("doodles").insert([
+//   {
+//     name: sketchname,
+//   },
+// ]);
 
 //   console.log(sketchname, sketchpath, error);
 // }
