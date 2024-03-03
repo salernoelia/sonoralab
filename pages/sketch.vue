@@ -13,7 +13,7 @@
 <script setup>
 import p5 from "p5";
 
-const supabase = usSupabaseClient();
+const supabase = useSupabaseClient();
 let sketchList = ref([]);
 
 let oscData = ref();
@@ -145,8 +145,8 @@ const saveSketch = async () => {
         const sketchList = await $fetch("api/fetchLocalSketch");
         if (sketchList && sketchList.files && sketchList.files.length > 0) {
           const firstFile = sketchList.files[0];
-          const readFile = sketchList.readFile;
-          const fullPath = sketchList.fullFilePath;
+          // const readFile = sketchList.readFile;
+          // const fullPath = sketchList.fullFilePath;
           const base64 = sketchList.base64;
           const byteCharacters = atob(base64);
           const byteNumbers = new Array(byteCharacters.length);
@@ -155,12 +155,6 @@ const saveSketch = async () => {
           }
           const byteArray = new Uint8Array(byteNumbers);
           const blob = new Blob([byteArray], { type: "image/jpeg" });
-
-          console.log("frontend blob file:", blob);
-          // const decodedFile = sketchlist.decodedFile;
-          // console.log("first sketch", sketchList.files[0]);
-          // const fullPath = `/Users/eliasalerno/Downloads/${firstFile}`; // Construct the full path
-          // console.log(fullPath);
           uploadSketch(firstFile, blob);
         } else {
           console.error("No files found in sketchList");
@@ -185,20 +179,6 @@ async function uploadSketch(sketchname, blob) {
 
   console.log(sketchname, error);
 }
-
-// async function uploadSketch(sketchname, sketchpath, readFile) {
-//   const { data, error } = await supabase.storage
-//     .from("sketches")
-//     .upload(sketchname, sketchpath);
-
-// const { data2, error2 } = await supabase.from("doodles").insert([
-//   {
-//     name: sketchname,
-//   },
-// ]);
-
-//   console.log(sketchname, sketchpath, error);
-// }
 
 onMounted(async () => {
   setupSketch();

@@ -2,11 +2,11 @@
 export default defineNuxtConfig({
   devtools: { enabled: true },
   ssr: false,
-  // serverMiddleware: ["~/server/middleware/oscServer"],
 
-  // server: {
-  //   requireMiddleware: ["esm"],
-  // },
   modules: ["@pinia/nuxt"],
-  // override: true,
+
+  runtimeConfig: {
+    url: process.env.SUPABASE_URL,
+    key: process.env.SUPABASE_KEY,
+  },
 });

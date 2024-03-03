@@ -17,7 +17,7 @@
 </template>
 
 <script setup>
-const supabase = usSupabaseClient();
+const supabase = useSupabaseClient();
 const imagesWithMetadata = ref([]);
 
 // Fetch list of objects (images) in the avatars bucket
