@@ -8,7 +8,7 @@
           :key="image.id"
           class="image-container"
         >
-          <img :src="image.url" alt="Doodle" />
+          <img :src="image.url.data.publicUrl" alt="Doodle" />
           <p>{{ image.metadata }}</p>
         </div>
       </div>
@@ -37,7 +37,6 @@ async function fetchImages() {
       );
     } else {
       // Combine image data with metadata
-
       imagesWithMetadata.value = images.map((image) => {
         const metadataItem = metadata.find((item) => item.name === image.name);
         return {
