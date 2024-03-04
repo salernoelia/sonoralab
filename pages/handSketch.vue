@@ -113,6 +113,7 @@ const setupSketch = () => {
       s.toggleFullscreen = () => {
         const fs = !s.fullscreen();
         s.fullscreen(fs);
+        s.pg.background(0, 0, 255);
       };
 
       s.clearSketch = () => {
@@ -198,6 +199,7 @@ const setupSketch = () => {
       s.resizeCanvas(clientWidth, clientHeight);
       s.pg.resizeCanvas(clientWidth, clientHeight);
       s.pg.background(0, 0, 255);
+      s.background(0, 0, 255);
     };
   });
 };

@@ -37,8 +37,8 @@ holistic_model = mp_holistic.Holistic(
     static_image_mode=False, 
     model_complexity=1, 
     smooth_landmarks=True, 
-    min_detection_confidence=0.7,
-    min_tracking_confidence=0.7
+    min_detection_confidence=0.4,
+    min_tracking_confidence=0.4
 )
 
 # Initializing the drawing utils for drawing the facial landmarks on image
