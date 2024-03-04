@@ -11,34 +11,18 @@
 </template>
 
 <script setup>
-// import p5 from "p5";
+import p5 from "p5";
 
 const supabase = useSupabaseClient();
 let sketchList = ref([]);
 
-// let x, y, z;
-// let pg;
-// let osc;
-// let udp;
-
-// onMounted(() => {
-//   const socket = new WebSocket("ws://localhost:8080");
-
-//   // socket.onopen = function (e) {
-//   //   console.log("Connected to WebSocket server", e);
-//   // };
-
-//   socket.onmessage = function (event) {
-//     console.log(event.data);
-//   };
-// });
-
 let handData = ref();
-
-let x, y, z;
-let pg;
-let osc;
-let udp;
+let leftHandX = ref(0);
+let leftHandY = ref(0);
+let leftHandZ = ref(0);
+let rightHandX = ref(0);
+let rightHandY = ref(0);
+let rightHandZ = ref(0);
 
 const socket = new WebSocket("ws://localhost:8081");
 
@@ -50,102 +34,115 @@ socket.onmessage = function (event) {
   const parsedData = JSON.parse(event.data);
   handData.value = parsedData;
   console.log(handData.value);
+
+  if (handData.value.hand == "left") {
+    leftHandX = handData.value.x;
+    leftHandY = handData.value.y;
+    leftHandZ = handData.value.z;
+  } else if (handData.value.hand == "right") {
+    rightHandX = handData.value.x;
+    rightHandY = handData.value.y;
+    rightHandZ = handData.value.z;
+    console.log(rightHandX, rightHandY, rightHandZ);
+  }
+
+  return leftHandX, leftHandY, leftHandZ, rightHandX, rightHandY, rightHandZ;
 };
 
 let sketchContainer = ref(null);
 let sketchInstance;
 
-// const setupSketch = () => {
-//   sketchInstance = new p5((s) => {
-//     // Define variables for smoothing
-//     const { clientWidth, clientHeight } = sketchContainer.value;
+const setupSketch = () => {
+  sketchInstance = new p5((s) => {
+    // Define variables for smoothing
+    const { clientWidth, clientHeight } = sketchContainer.value;
 
-//     const smoothingFactor = 0.1; // Adjust this value for more or less smoothing
-//     let smoothedX = clientWidth / 2;
-//     let smoothedY = clientHeight / 2;
+    const smoothingFactor = 0.1; // Adjust this value for more or less smoothing
+    let smoothedX = clientWidth / 2;
+    let smoothedY = clientHeight / 2;
 
-//     s.setup = () => {
-//       s.createCanvas(clientWidth, clientHeight).parent(sketchContainer.value);
-//       s.pg = s.createGraphics(s.width, s.height);
-//       s.background(0, 0, 255);
-//       s.pg.background(0, 0, 255);
-//       s.noStroke();
-//       s.previousX = null;
-//       s.previousY = null;
-//       s.save = async () => {
-//         await s.pg.save("sketch.jpg");
-//         s.pg.background(0, 0, 255);
-//       };
-//     };
+    s.setup = () => {
+      s.createCanvas(clientWidth, clientHeight).parent(sketchContainer.value);
+      s.pg = s.createGraphics(s.width, s.height);
+      s.background(0, 0, 255);
+      s.pg.background(0, 0, 255);
+      s.noStroke();
+      s.previousX = null;
+      s.previousY = null;
+      s.save = async () => {
+        await s.pg.save("sketch.jpg");
+        s.pg.background(0, 0, 255);
+      };
+    };
 
-//     s.draw = () => {
-//       // Smooth the gyro data
-//       smoothedX = s.lerp(
-//         smoothedX,
-//         s.map(-gyroX.value, -1, 1, 0, s.width),
-//         smoothingFactor
-//       );
-//       smoothedY = s.lerp(
-//         smoothedY,
-//         s.map(gyroY.value, -1, 1, 0, s.height),
-//         smoothingFactor
-//       );
+    s.draw = () => {
+      // Smooth the gyro data
+      smoothedX = s.lerp(
+        smoothedX,
+        s.map(-gyroX.value, -1, 1, 0, s.width),
+        smoothingFactor
+      );
+      smoothedY = s.lerp(
+        smoothedY,
+        s.map(gyroY.value, -1, 1, 0, s.height),
+        smoothingFactor
+      );
 
-//       s.accX = s.map(accelX.value, 0, 1, 0, 1);
-//       s.accY = s.map(accelY.value, 0, 1, 0, 1);
+      s.accX = s.map(accelX.value, 0, 1, 0, 1);
+      s.accY = s.map(accelY.value, 0, 1, 0, 1);
 
-//       s.fill(0);
-//       if (s.previousX !== null && s.previousY !== null) {
-//         s.pen();
-//       }
-//       s.previousX = smoothedX;
-//       s.previousY = smoothedY;
-//       s.image(s.pg, 0, 0); // Display the pg graphics on the canvas
-//     };
+      s.fill(0);
+      if (s.previousX !== null && s.previousY !== null) {
+        s.pen();
+      }
+      s.previousX = smoothedX;
+      s.previousY = smoothedY;
+      s.image(s.pg, 0, 0); // Display the pg graphics on the canvas
+    };
 
-//     s.pen = () => {
-//       s.pg.stroke(0, 255, 0);
-//       // Use the average of accX and accY to control the stroke weight
-//       s.pg.strokeWeight(0.8);
-//       // s.pg.strokeWeight((s.accX + s.accY) / 2);
-//       s.pg.line(smoothedX, smoothedY, s.previousX, s.previousY);
-//     };
+    s.pen = () => {
+      s.pg.stroke(0, 255, 0);
+      // Use the average of accX and accY to control the stroke weight
+      s.pg.strokeWeight(0.8);
+      // s.pg.strokeWeight((s.accX + s.accY) / 2);
+      s.pg.line(smoothedX, smoothedY, s.previousX, s.previousY);
+    };
 
-//     s.windowResized = () => {
-//       const { clientWidth, clientHeight } = sketchContainer.value;
-//       s.resizeCanvas(clientWidth, clientHeight);
-//     };
-//   });
-// };
+    s.windowResized = () => {
+      const { clientWidth, clientHeight } = sketchContainer.value;
+      s.resizeCanvas(clientWidth, clientHeight);
+    };
+  });
+};
 
-// const saveSketch = async () => {
-//   if (sketchInstance) {
-//     await sketchInstance.save();
-//     setTimeout(async () => {
-//       try {
-//         const sketchList = await $fetch("api/fetchLocalSketch");
-//         if (sketchList && sketchList.files && sketchList.files.length > 0) {
-//           const firstFile = sketchList.files[0];
-//           // const readFile = sketchList.readFile;
-//           // const fullPath = sketchList.fullFilePath;
-//           const base64 = sketchList.base64;
-//           const byteCharacters = atob(base64);
-//           const byteNumbers = new Array(byteCharacters.length);
-//           for (let i = 0; i < byteCharacters.length; i++) {
-//             byteNumbers[i] = byteCharacters.charCodeAt(i);
-//           }
-//           const byteArray = new Uint8Array(byteNumbers);
-//           const blob = new Blob([byteArray], { type: "image/jpeg" });
-//           uploadSketch(firstFile, blob);
-//         } else {
-//           console.error("No files found in sketchList");
-//         }
-//       } catch (error) {
-//         console.error("Error fetching sketchList:", error);
-//       }
-//     }, 200);
-//   }
-// };
+const saveSketch = async () => {
+  if (sketchInstance) {
+    await sketchInstance.save();
+    setTimeout(async () => {
+      try {
+        const sketchList = await $fetch("api/fetchLocalSketch");
+        if (sketchList && sketchList.files && sketchList.files.length > 0) {
+          const firstFile = sketchList.files[0];
+          // const readFile = sketchList.readFile;
+          // const fullPath = sketchList.fullFilePath;
+          const base64 = sketchList.base64;
+          const byteCharacters = atob(base64);
+          const byteNumbers = new Array(byteCharacters.length);
+          for (let i = 0; i < byteCharacters.length; i++) {
+            byteNumbers[i] = byteCharacters.charCodeAt(i);
+          }
+          const byteArray = new Uint8Array(byteNumbers);
+          const blob = new Blob([byteArray], { type: "image/jpeg" });
+          uploadSketch(firstFile, blob);
+        } else {
+          console.error("No files found in sketchList");
+        }
+      } catch (error) {
+        console.error("Error fetching sketchList:", error);
+      }
+    }, 200);
+  }
+};
 
 async function uploadSketch(sketchname, blob) {
   const { data, error } = await supabase.storage
@@ -161,9 +158,9 @@ async function uploadSketch(sketchname, blob) {
   console.log(sketchname, error);
 }
 
-// onMounted(async () => {
-//   setupSketch();
-// });
+onMounted(async () => {
+  setupSketch();
+});
 </script>
 
 <style scoped>

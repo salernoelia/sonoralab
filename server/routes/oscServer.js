@@ -2,14 +2,14 @@ import { Server } from "node-osc";
 import { WebSocketServer } from "ws";
 
 const oscServer = new Server(50001, "0.0.0.0", () => {
-  console.log("OSC Server is sending on port 50001");
+  console.log("OSC Server is listening on port 50001");
 });
 
 const wss = new WebSocketServer({ port: 8080 });
 console.log("WebSocket Server is sending on 8080");
 
 oscServer.on("message", function (msg) {
-  console.log("Message received from OSC Server", msg);
+  // console.log("Message received from OSC Server", msg);
   let stringifiedMSG = JSON.stringify(msg);
   let parsedMSG = JSON.parse(stringifiedMSG);
 
