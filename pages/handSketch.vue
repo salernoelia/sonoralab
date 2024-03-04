@@ -2,10 +2,13 @@
   <div class="sketch" ref="sketchContainer">
     <div class="buttonContainer">
       <button class="button" @click="sketchInstance.toggleFullscreen()">
-        toggle fullscreen
+        Toggle fullscreen
       </button>
-      <button class="button" @click="saveSketch">save</button>
+      <button class="button" @click="saveSketch">Save</button>
       <!-- <input type="file" @change="uploadSketch" /> -->
+      <button class="button" @click="sketchInstance.clearSketch()">
+        Clear Sketches
+      </button>
     </div>
   </div>
 </template>
@@ -87,6 +90,10 @@ const setupSketch = () => {
       s.toggleFullscreen = () => {
         const fs = !s.fullscreen();
         s.fullscreen(fs);
+      };
+
+      s.clearSketch = () => {
+        s.pg.background(0, 0, 255);
       };
     };
 
@@ -187,6 +194,13 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
 .sketch {
   position: absolute;
   top: 0;
