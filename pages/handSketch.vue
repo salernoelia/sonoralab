@@ -28,6 +28,14 @@ let leftHandIndexX = ref(0);
 let leftHandIndexY = ref(0);
 let leftHandIndexZ = ref(0);
 
+let rightHandThumbX = ref(0);
+let rightHandThumbY = ref(0);
+let rightHandThumbZ = ref(0);
+
+let leftHandThumbX = ref(0);
+let leftHandThumbY = ref(0);
+let leftHandThumbZ = ref(0);
+
 const socket = new WebSocket("ws://localhost:8081");
 
 socket.onopen = function (e) {
@@ -47,6 +55,14 @@ socket.onmessage = function (event) {
     rightHandIndexX.value = handData.value.x;
     rightHandIndexY.value = handData.value.y;
     rightHandIndexZ.value = handData.value.z;
+  } else if (handData.value.hand == "left-thumb") {
+    leftHandThumbX.value = handData.value.x;
+    leftHandThumbY.value = handData.value.y;
+    leftHandThumbZ.value = handData.value.z;
+  } else if (handData.value.hand == "right-thumb") {
+    rightHandThumbX.value = handData.value.x;
+    rightHandThumbY.value = handData.value.y;
+    rightHandThumbZ.value = handData.value.z;
   }
 
   return (
@@ -55,7 +71,13 @@ socket.onmessage = function (event) {
     leftHandIndexZ.value,
     rightHandIndexX.value,
     rightHandIndexY.value,
-    rightHandIndexZ.value
+    rightHandIndexZ.value,
+    leftHandThumbX.value,
+    leftHandThumbY.value,
+    leftHandThumbZ.value,
+    rightHandThumbX.value,
+    rightHandThumbY.value,
+    rightHandThumbZ.value
   );
 };
 
@@ -104,6 +126,47 @@ const setupSketch = () => {
       s.rY = s.map(rightHandIndexY.value, 0, 1, 0, s.height);
       s.lX = s.map(leftHandIndexX.value, 0, 1, s.width, 0);
       s.lY = s.map(leftHandIndexY.value, 0, 1, 0, s.height);
+
+      function calculateDistance(x1, y1, x2, y2) {
+        return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+      }
+
+      // Check if hand data is available
+      if (
+        (rightHandIndexX.value &&
+          rightHandIndexY.value &&
+          rightHandThumbX.value &&
+          rightHandThumbY.value) ||
+        (leftHandIndexX.value &&
+          leftHandIndexY.value &&
+          leftHandThumbX.value &&
+          leftHandThumbY.value)
+      ) {
+        // Check if the index finger and thumb are pinched for either hand
+        if (
+          // Check for right hand
+          (rightHandIndexX.value &&
+            calculateDistance(
+              rightHandIndexX.value,
+              rightHandIndexY.value,
+              rightHandThumbX.value,
+              rightHandThumbY.value
+            ) <= 0.05) ||
+          // Check for left hand
+          (leftHandIndexX.value &&
+            calculateDistance(
+              leftHandIndexX.value,
+              leftHandIndexY.value,
+              leftHandThumbX.value,
+              leftHandThumbY.value
+            ) <= 0.05)
+        ) {
+          s.pinched = true;
+        }
+      } else {
+        s.pinched = false;
+      }
+
       // console.log("p5 hands", rightHandIndexX.value, rightHandIndexY.value);
 
       // s.accX = s.map(accelX.value, 0, 1, 0, 1);
@@ -112,22 +175,30 @@ const setupSketch = () => {
       s.ellipse(s.lX, s.lY, 5, 5);
 
       s.fill(0);
-      s.pen();
-      s.image(s.pg, 0, 0); // Display the pg graphics on the canvas
+      if (rightHandIndexX.value || leftHandIndexY.value) {
+        s.pen();
+        s.image(s.pg, 0, 0); // Display the pg graphics on the canvas
+      }
+      // s.pen();
+      // s.image(s.pg, 0, 0); // Display the pg graphics on the canvas
     };
 
     s.pen = () => {
       s.pg.stroke(0, 255, 0);
       s.pg.strokeWeight(1);
 
-      // If previousRightX and previousRightY are not null, draw a line from the previous position to the current position for the right hand
-      if (s.previousRightX !== null && s.previousRightY !== null) {
-        s.pg.line(s.rX, s.rY, s.previousRightX, s.previousRightY);
-      }
+      if (s.pinched) {
+        // If previousRightX and previousRightY are not null, draw a line from the previous position to the current position for the right hand
+        if (s.previousRightX !== null && s.previousRightY !== null) {
+          s.pg.line(s.rX, s.rY, s.previousRightX, s.previousRightY);
+          s.pg.circle(s.rX, s.rY, 5);
+        }
 
-      // If previousLeftX and previousLeftY are not null, draw a line from the previous position to the current position for the left hand
-      if (s.previousLeftX !== null && s.previousLeftY !== null) {
-        s.pg.line(s.lX, s.lY, s.previousLeftX, s.previousLeftY);
+        // If previousLeftX and previousLeftY are not null, draw a line from the previous position to the current position for the left hand
+        if (s.previousLeftX !== null && s.previousLeftY !== null) {
+          s.pg.line(s.lX, s.lY, s.previousLeftX, s.previousLeftY);
+          s.pg.circle(s.lX, s.lY, 5);
+        }
       }
 
       // Update previousX and previousY with the current positions for both hands

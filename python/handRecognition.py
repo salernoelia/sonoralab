@@ -80,7 +80,7 @@ while capture.isOpened():
             'y': landmark_8.y,
             'z': landmark_8.z,
         }
-        landmark_4 = results.right_hand_landmarks.landmark[8]
+        landmark_4 = results.right_hand_landmarks.landmark[4]
         landmark_data_thumb = {
             'hand': 'right-thumb',
             'x': landmark_4.x,
@@ -101,7 +101,7 @@ while capture.isOpened():
             'y': landmark_8.y,
             'z': landmark_8.z,
         }
-        landmark_4 = results.left_hand_landmarks.landmark[8]
+        landmark_4 = results.left_hand_landmarks.landmark[4]
         landmark_data_thumb = {
             'hand': 'left-thumb',
             'x': landmark_4.x,
