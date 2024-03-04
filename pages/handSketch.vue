@@ -1,8 +1,8 @@
 <template>
   <div class="sketch" ref="sketchContainer">
     <div class="buttonContainer">
-      <button class="button" @click="fullscreen()">
-        fullscreen (doesnt work yet)
+      <button class="button" @click="sketchInstance.toggleFullscreen()">
+        toggle fullscreen
       </button>
       <button class="button" @click="saveSketch">save</button>
       <!-- <input type="file" @change="uploadSketch" /> -->
@@ -70,8 +70,9 @@ const setupSketch = () => {
     s.setup = () => {
       s.createCanvas(clientWidth, clientHeight).parent(sketchContainer.value);
       s.pg = s.createGraphics(s.width, s.height);
-      s.background(255);
-      // s.pg.background(0, 0, 255);
+      s.background(0, 0, 255);
+
+      s.pg.background(0, 0, 255);
       s.noStroke();
       s.previousRightX = null;
       s.previousRightY = null;
@@ -81,6 +82,11 @@ const setupSketch = () => {
       s.save = async () => {
         await s.pg.save("sketch.jpg");
         s.pg.background(0, 0, 255);
+      };
+
+      s.toggleFullscreen = () => {
+        const fs = !s.fullscreen();
+        s.fullscreen(fs);
       };
     };
 
@@ -126,6 +132,8 @@ const setupSketch = () => {
     s.windowResized = () => {
       const { clientWidth, clientHeight } = sketchContainer.value;
       s.resizeCanvas(clientWidth, clientHeight);
+      s.pg.resizeCanvas(clientWidth, clientHeight);
+      s.pg.background(0, 0, 255);
     };
   });
 };
