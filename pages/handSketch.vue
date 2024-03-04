@@ -73,8 +73,11 @@ const setupSketch = () => {
       s.background(255);
       // s.pg.background(0, 0, 255);
       s.noStroke();
-      s.previousX = null;
-      s.previousY = null;
+      s.previousRightX = null;
+      s.previousRightY = null;
+      s.previousLeftX = null;
+      s.previousLeftY = null;
+
       s.save = async () => {
         await s.pg.save("sketch.jpg");
         s.pg.background(0, 0, 255);
@@ -103,14 +106,21 @@ const setupSketch = () => {
       s.pg.stroke(0, 255, 0);
       s.pg.strokeWeight(1);
 
-      // If previousX and previousY are not null, draw a line from the previous position to the current position
-      if (s.previousX !== null && s.previousY !== null) {
-        s.pg.line(s.rX, s.rY, s.previousX, s.previousY);
+      // If previousRightX and previousRightY are not null, draw a line from the previous position to the current position for the right hand
+      if (s.previousRightX !== null && s.previousRightY !== null) {
+        s.pg.line(s.rX, s.rY, s.previousRightX, s.previousRightY);
       }
 
-      // Update previousX and previousY with the current position
-      s.previousX = s.rX;
-      s.previousY = s.rY;
+      // If previousLeftX and previousLeftY are not null, draw a line from the previous position to the current position for the left hand
+      if (s.previousLeftX !== null && s.previousLeftY !== null) {
+        s.pg.line(s.lX, s.lY, s.previousLeftX, s.previousLeftY);
+      }
+
+      // Update previousX and previousY with the current positions for both hands
+      s.previousRightX = s.rX;
+      s.previousRightY = s.rY;
+      s.previousLeftX = s.lX;
+      s.previousLeftY = s.lY;
     };
 
     s.windowResized = () => {
