@@ -39,12 +39,12 @@ socket.onopen = function (e) {
 socket.onmessage = function (event) {
   oscData.value = JSON.parse(event.data);
 
-  if (oscData.value[0] === "/zigsim/quaternion") {
+  if (oscData.value[0] === "/leg/quaternion") {
     gyroX.value = oscData.value[1];
     gyroY.value = oscData.value[2];
     gyroZ.value = oscData.value[3];
     gyroW.value = oscData.value[4];
-  } else if (oscData.value[0] === "/zigsim/accel") {
+  } else if (oscData.value[0] === "/leg/accel") {
     accelX.value = oscData.value[1];
     accelY.value = oscData.value[2];
     accelZ.value = oscData.value[3];
@@ -87,14 +87,14 @@ const setupSketch = () => {
     s.setup = () => {
       s.createCanvas(clientWidth, clientHeight).parent(sketchContainer.value);
       s.pg = s.createGraphics(s.width, s.height);
-      s.background(255);
-      s.pg.background(255);
+      s.background(0, 0, 255);
+      s.pg.background(0, 0, 255);
       s.noStroke();
       s.previousX = null;
       s.previousY = null;
       s.save = async () => {
         await s.pg.save("sketch.jpg");
-        s.pg.background(255);
+        s.pg.background(0, 0, 255);
       };
     };
 
@@ -124,9 +124,10 @@ const setupSketch = () => {
     };
 
     s.pen = () => {
-      s.pg.stroke(0, 0, 0, 255);
+      s.pg.stroke(0, 255, 0);
       // Use the average of accX and accY to control the stroke weight
-      s.pg.strokeWeight((s.accX + s.accY) / 2);
+      s.pg.strokeWeight(0.8);
+      // s.pg.strokeWeight((s.accX + s.accY) / 2);
       s.pg.line(smoothedX, smoothedY, s.previousX, s.previousY);
     };
 
