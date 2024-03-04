@@ -87,7 +87,7 @@ const setupSketch = () => {
       s.rY = s.map(rightHandY.value, 0, 1, 0, s.height);
       s.lX = s.map(leftHandX.value, 0, 1, s.width, 0);
       s.lY = s.map(leftHandY.value, 0, 1, 0, s.height);
-      console.log("p5 hands", rightHandX.value, rightHandY.value);
+      // console.log("p5 hands", rightHandX.value, rightHandY.value);
 
       // s.accX = s.map(accelX.value, 0, 1, 0, 1);
       // s.accY = s.map(accelY.value, 0, 1, 0, 1);
@@ -95,18 +95,22 @@ const setupSketch = () => {
       s.ellipse(s.lX, s.lY, 5, 5);
 
       s.fill(0);
-      if (s.previousX !== null && s.previousY !== null) {
-        s.pen();
-      }
+      s.pen();
       s.image(s.pg, 0, 0); // Display the pg graphics on the canvas
     };
 
     s.pen = () => {
       s.pg.stroke(0, 255, 0);
-      // Use the average of accX and accY to control the stroke weight
       s.pg.strokeWeight(1);
-      // s.pg.strokeWeight((s.accX + s.accY) / 2);
-      s.pg.line(s.rX, s.rY, s.previousX, s.previousY);
+
+      // If previousX and previousY are not null, draw a line from the previous position to the current position
+      if (s.previousX !== null && s.previousY !== null) {
+        s.pg.line(s.rX, s.rY, s.previousX, s.previousY);
+      }
+
+      // Update previousX and previousY with the current position
+      s.previousX = s.rX;
+      s.previousY = s.rY;
     };
 
     s.windowResized = () => {
