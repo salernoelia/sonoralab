@@ -85,11 +85,14 @@ const setupSketch = () => {
       // Smooth the gyro data
       s.rX = s.map(rightHandX.value, 0, 1, s.width, 0);
       s.rY = s.map(rightHandY.value, 0, 1, 0, s.height);
+      s.lX = s.map(leftHandX.value, 0, 1, s.width, 0);
+      s.lY = s.map(leftHandY.value, 0, 1, 0, s.height);
       console.log("p5 hands", rightHandX.value, rightHandY.value);
 
       // s.accX = s.map(accelX.value, 0, 1, 0, 1);
       // s.accY = s.map(accelY.value, 0, 1, 0, 1);
       s.ellipse(s.rX, s.rY, 5, 5);
+      s.ellipse(s.lX, s.lY, 5, 5);
 
       s.fill(0);
       if (s.previousX !== null && s.previousY !== null) {
