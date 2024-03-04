@@ -20,12 +20,13 @@ const supabase = useSupabaseClient();
 let sketchList = ref([]);
 
 let handData = ref();
-let leftHandX = ref(0);
-let leftHandY = ref(0);
-let leftHandZ = ref(0);
-let rightHandX = ref(0);
-let rightHandY = ref(0);
-let rightHandZ = ref(0);
+let rightHandIndexX = ref(0);
+let rightHandIndexY = ref(0);
+let rightHandIndexZ = ref(0);
+
+let leftHandIndexX = ref(0);
+let leftHandIndexY = ref(0);
+let leftHandIndexZ = ref(0);
 
 const socket = new WebSocket("ws://localhost:8081");
 
@@ -38,23 +39,23 @@ socket.onmessage = function (event) {
   handData.value = parsedData;
   console.log(handData.value);
 
-  if (handData.value.hand == "left") {
-    leftHandX.value = handData.value.x;
-    leftHandY.value = handData.value.y;
-    leftHandZ.value = handData.value.z;
-  } else if (handData.value.hand == "right") {
-    rightHandX.value = handData.value.x;
-    rightHandY.value = handData.value.y;
-    rightHandZ.value = handData.value.z;
+  if (handData.value.hand == "left-index") {
+    leftHandIndexX.value = handData.value.x;
+    leftHandIndexY.value = handData.value.y;
+    leftHandIndexZ.value = handData.value.z;
+  } else if (handData.value.hand == "right-index") {
+    rightHandIndexX.value = handData.value.x;
+    rightHandIndexY.value = handData.value.y;
+    rightHandIndexZ.value = handData.value.z;
   }
 
   return (
-    leftHandX.value,
-    leftHandY.value,
-    leftHandZ.value,
-    rightHandX.value,
-    rightHandY.value,
-    rightHandZ.value
+    leftHandIndexX.value,
+    leftHandIndexY.value,
+    leftHandIndexZ.value,
+    rightHandIndexX.value,
+    rightHandIndexY.value,
+    rightHandIndexZ.value
   );
 };
 
@@ -99,11 +100,11 @@ const setupSketch = () => {
 
     s.draw = () => {
       // Smooth the gyro data
-      s.rX = s.map(rightHandX.value, 0, 1, s.width, 0);
-      s.rY = s.map(rightHandY.value, 0, 1, 0, s.height);
-      s.lX = s.map(leftHandX.value, 0, 1, s.width, 0);
-      s.lY = s.map(leftHandY.value, 0, 1, 0, s.height);
-      // console.log("p5 hands", rightHandX.value, rightHandY.value);
+      s.rX = s.map(rightHandIndexX.value, 0, 1, s.width, 0);
+      s.rY = s.map(rightHandIndexY.value, 0, 1, 0, s.height);
+      s.lX = s.map(leftHandIndexX.value, 0, 1, s.width, 0);
+      s.lY = s.map(leftHandIndexY.value, 0, 1, 0, s.height);
+      // console.log("p5 hands", rightHandIndexX.value, rightHandIndexY.value);
 
       // s.accX = s.map(accelX.value, 0, 1, 0, 1);
       // s.accY = s.map(accelY.value, 0, 1, 0, 1);

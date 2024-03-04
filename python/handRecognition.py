@@ -74,25 +74,44 @@ while capture.isOpened():
     # Code to access landmarks
     if results.right_hand_landmarks:
         landmark_8 = results.right_hand_landmarks.landmark[8]
-        landmark_data = {
-            'hand': 'right',
+        landmark_data_index = {
+            'hand': 'right-index',
             'x': landmark_8.x,
             'y': landmark_8.y,
             'z': landmark_8.z,
         }
-        print("Right Hand", landmark_data)
-        ws.send(json.dumps(landmark_data))
+        landmark_4 = results.right_hand_landmarks.landmark[8]
+        landmark_data_thumb = {
+            'hand': 'right-thumb',
+            'x': landmark_4.x,
+            'y': landmark_4.y,
+            'z': landmark_4.z,
+        }
+        
+        
+        # print("Right Hand", landmark_data)
+        ws.send(json.dumps(landmark_data_index))
+        ws.send(json.dumps(landmark_data_thumb))
         
     if results.left_hand_landmarks:
         landmark_8 = results.left_hand_landmarks.landmark[8]
-        landmark_data = {
-            'hand': 'left',
+        landmark_data_index = {
+            'hand': 'left-index',
             'x': landmark_8.x,
             'y': landmark_8.y,
             'z': landmark_8.z,
         }
-        print("Left Hand", landmark_data)
-        ws.send(json.dumps(landmark_data))
+        landmark_4 = results.left_hand_landmarks.landmark[8]
+        landmark_data_thumb = {
+            'hand': 'left-thumb',
+            'x': landmark_4.x,
+            'y': landmark_4.y,
+            'z': landmark_4.z,
+        }
+        # print("Left Hand", landmark_data)
+        ws.send(json.dumps(landmark_data_index))
+        ws.send(json.dumps(landmark_data_thumb))
+        
 
     # right hand
     mp_drawing.draw_landmarks(
