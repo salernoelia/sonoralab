@@ -36,17 +36,23 @@ socket.onmessage = function (event) {
   console.log(handData.value);
 
   if (handData.value.hand == "left") {
-    leftHandX = handData.value.x;
-    leftHandY = handData.value.y;
-    leftHandZ = handData.value.z;
+    leftHandX.value = handData.value.x;
+    leftHandY.value = handData.value.y;
+    leftHandZ.value = handData.value.z;
   } else if (handData.value.hand == "right") {
-    rightHandX = handData.value.x;
-    rightHandY = handData.value.y;
-    rightHandZ = handData.value.z;
-    console.log(rightHandX, rightHandY, rightHandZ);
+    rightHandX.value = handData.value.x;
+    rightHandY.value = handData.value.y;
+    rightHandZ.value = handData.value.z;
   }
 
-  return leftHandX, leftHandY, leftHandZ, rightHandX, rightHandY, rightHandZ;
+  return (
+    leftHandX.value,
+    leftHandY.value,
+    leftHandZ.value,
+    rightHandX.value,
+    rightHandY.value,
+    rightHandZ.value
+  );
 };
 
 let sketchContainer = ref(null);
@@ -57,15 +63,15 @@ const setupSketch = () => {
     // Define variables for smoothing
     const { clientWidth, clientHeight } = sketchContainer.value;
 
-    const smoothingFactor = 0.1; // Adjust this value for more or less smoothing
-    let smoothedX = clientWidth / 2;
-    let smoothedY = clientHeight / 2;
+    // const smoothingFactor = 0.1; // Adjust this value for more or less smoothing
+    // let smoothedX = clientWidth / 2;
+    // let smoothedY = clientHeight / 2;
 
     s.setup = () => {
       s.createCanvas(clientWidth, clientHeight).parent(sketchContainer.value);
       s.pg = s.createGraphics(s.width, s.height);
-      s.background(0, 0, 255);
-      s.pg.background(0, 0, 255);
+      s.background(255);
+      // s.pg.background(0, 0, 255);
       s.noStroke();
       s.previousX = null;
       s.previousY = null;
@@ -77,35 +83,27 @@ const setupSketch = () => {
 
     s.draw = () => {
       // Smooth the gyro data
-      smoothedX = s.lerp(
-        smoothedX,
-        s.map(-gyroX.value, -1, 1, 0, s.width),
-        smoothingFactor
-      );
-      smoothedY = s.lerp(
-        smoothedY,
-        s.map(gyroY.value, -1, 1, 0, s.height),
-        smoothingFactor
-      );
+      s.rX = s.map(rightHandX.value, 0, 1, s.width, 0);
+      s.rY = s.map(rightHandY.value, 0, 1, 0, s.height);
+      console.log("p5 hands", rightHandX.value, rightHandY.value);
 
-      s.accX = s.map(accelX.value, 0, 1, 0, 1);
-      s.accY = s.map(accelY.value, 0, 1, 0, 1);
+      // s.accX = s.map(accelX.value, 0, 1, 0, 1);
+      // s.accY = s.map(accelY.value, 0, 1, 0, 1);
+      s.ellipse(s.rX, s.rY, 5, 5);
 
       s.fill(0);
       if (s.previousX !== null && s.previousY !== null) {
         s.pen();
       }
-      s.previousX = smoothedX;
-      s.previousY = smoothedY;
       s.image(s.pg, 0, 0); // Display the pg graphics on the canvas
     };
 
     s.pen = () => {
       s.pg.stroke(0, 255, 0);
       // Use the average of accX and accY to control the stroke weight
-      s.pg.strokeWeight(0.8);
+      s.pg.strokeWeight(1);
       // s.pg.strokeWeight((s.accX + s.accY) / 2);
-      s.pg.line(smoothedX, smoothedY, s.previousX, s.previousY);
+      s.pg.line(s.rX, s.rY, s.previousX, s.previousY);
     };
 
     s.windowResized = () => {
