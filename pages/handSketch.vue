@@ -36,6 +36,18 @@ let leftHandThumbX = ref(0);
 let leftHandThumbY = ref(0);
 let leftHandThumbZ = ref(0);
 
+let frequency = 0;
+
+let context = new AudioContext();
+let o = context.createOscillator();
+
+o.type = "sine";
+o.frequency.setValueAtTime(0, context.currentTime);
+o.connect(context.destination);
+o.start();
+
+o.frequency.setValueAtTime(frequency, context.currentTime);
+
 const socket = new WebSocket("ws://localhost:8081");
 
 socket.onopen = function (e) {
@@ -96,10 +108,10 @@ const setupSketch = () => {
     s.setup = () => {
       s.createCanvas(clientWidth, clientHeight).parent(sketchContainer.value);
       s.pg = s.createGraphics(s.width, s.height);
-      s.background(0, 0, 255);
-
-      s.pg.background(0, 0, 255);
+      s.background(255);
+      s.pg.background(255);
       s.noStroke();
+
       s.previousRightX = null;
       s.previousRightY = null;
       s.previousLeftX = null;
@@ -107,17 +119,20 @@ const setupSketch = () => {
 
       s.save = async () => {
         await s.pg.save("sketch.jpg");
-        s.pg.background(0, 0, 255);
+        s.pg.background(255);
+        s.background(255);
       };
 
       s.toggleFullscreen = () => {
         const fs = !s.fullscreen();
         s.fullscreen(fs);
-        s.pg.background(0, 0, 255);
+        s.pg.background(255);
+        s.background(255);
       };
 
       s.clearSketch = () => {
-        s.pg.background(0, 0, 255);
+        s.pg.background(255);
+        s.background(255);
       };
     };
 
@@ -127,6 +142,8 @@ const setupSketch = () => {
       s.rY = s.map(rightHandIndexY.value, 0, 1, 0, s.height);
       s.lX = s.map(leftHandIndexX.value, 0, 1, s.width, 0);
       s.lY = s.map(leftHandIndexY.value, 0, 1, 0, s.height);
+
+      s.frequency = s.map(s.rX, 0, s.width, 200, 1000); // Map hand movement to frequency range
 
       function calculateDistance(x1, y1, x2, y2) {
         return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
@@ -167,24 +184,29 @@ const setupSketch = () => {
         }
       }
 
+      // Update frequency value dynamically based on hand movement
+
       // s.pen();
       // s.image(s.pg, 0, 0); // Display the pg graphics on the canvas
+      return (frequency = s.frequency);
     };
 
     s.pen = () => {
-      s.pg.stroke(0, 255, 0);
+      // s.pg.stroke(0, 255, 0);
       s.pg.strokeWeight(1);
 
       // If previousRightX and previousRightY are not null, draw a line from the previous position to the current position for the right hand
       if (s.previousRightX !== null && s.previousRightY !== null) {
+        s.pg.stroke(0, 0, 255);
         s.pg.line(s.rX, s.rY, s.previousRightX, s.previousRightY);
-        s.pg.circle(s.rX, s.rY, 5);
+        // s.pg.circle(s.rX, s.rY, 5);
       }
 
       // If previousLeftX and previousLeftY are not null, draw a line from the previous position to the current position for the left hand
       if (s.previousLeftX !== null && s.previousLeftY !== null) {
+        s.pg.stroke(255, 0, 255);
         s.pg.line(s.lX, s.lY, s.previousLeftX, s.previousLeftY);
-        s.pg.circle(s.lX, s.lY, 5);
+        // s.pg.circle(s.lX, s.lY, 5);
       }
 
       // Update previousX and previousY with the current positions for both hands
@@ -232,6 +254,14 @@ const saveSketch = async () => {
     }, 200);
   }
 };
+
+watch(
+  () => frequency,
+  (newValue) => {
+    o.frequency.value = newValue; // Update frequency value
+    console.log(o.frequency.value);
+  }
+);
 
 async function uploadSketch(sketchname, blob) {
   const { data, error } = await supabase.storage

@@ -9,7 +9,7 @@
           class="image-container"
         >
           <img :src="image.url.data.publicUrl" alt="Doodle" />
-          <p>{{ image.metadata }}</p>
+          <p class="image-metadata">{{ image.metadata }}</p>
         </div>
       </div>
     </div>
@@ -19,6 +19,7 @@
 <script setup>
 const supabase = useSupabaseClient();
 const imagesWithMetadata = ref([]);
+let sortedImages = ref([]);
 
 // Fetch list of objects (images) in the avatars bucket
 async function fetchImages() {
@@ -45,6 +46,11 @@ async function fetchImages() {
           url: supabase.storage.from("sketches").getPublicUrl(image.name),
         };
       });
+
+      // Sort the images after mapping
+      imagesWithMetadata.value.sort((a, b) => {
+        return new Date(b.created_at) - new Date(a.created_at);
+      });
     }
   } catch (error) {
     console.error("Error fetching images:", error.message);
@@ -62,6 +68,11 @@ onUnmounted(() => clearInterval(timer));
 </script>
 
 <style lang="scss" scoped>
+* {
+  box-sizing: border-box;
+  font-family: "Courier New", Courier, monospace;
+}
+
 .gallery {
   width: 100%;
   display: grid;
@@ -83,6 +94,15 @@ onUnmounted(() => clearInterval(timer));
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border: 1px solid #ccc;
+}
+
+.image-metadata {
+  position: absolute;
+  bottom: 0;
+  color: rgb(255, 238, 0);
+  mix-blend-mode: difference;
+  text-align: center;
+  padding: 0.2rem;
+  // background-color: rgba(0, 0, 0, 0.2);
 }
 </style>
