@@ -18,7 +18,7 @@
 const slider = ref(200); // Initialize slider with default value
 const context = new AudioContext();
 const o = context.createOscillator();
-o.type = "triangle";
+o.type = "sine";
 o.frequency.value = slider.value; // Initialize frequency value
 
 // Watch for changes in the slider value

@@ -36,18 +36,6 @@ let leftHandThumbX = ref(0);
 let leftHandThumbY = ref(0);
 let leftHandThumbZ = ref(0);
 
-let frequency = 0;
-
-let context = new AudioContext();
-let o = context.createOscillator();
-
-o.type = "sine";
-o.frequency.setValueAtTime(0, context.currentTime);
-o.connect(context.destination);
-o.start();
-
-o.frequency.setValueAtTime(frequency, context.currentTime);
-
 const socket = new WebSocket("ws://localhost:8081");
 
 socket.onopen = function (e) {
@@ -97,6 +85,8 @@ let sketchContainer = ref(null);
 let sketchInstance;
 
 const setupSketch = () => {
+  let context, o, gainNode;
+
   sketchInstance = new p5((s) => {
     // Define variables for smoothing
     const { clientWidth, clientHeight } = sketchContainer.value;
@@ -116,6 +106,15 @@ const setupSketch = () => {
       s.previousRightY = null;
       s.previousLeftX = null;
       s.previousLeftY = null;
+
+      context = new AudioContext();
+      o = context.createOscillator();
+      gainNode = context.createGain(); // Create a gain node
+      o.type = "sine";
+      o.frequency.setValueAtTime(0, context.currentTime);
+      o.connect(gainNode); // Connect oscillator to gain node
+      gainNode.connect(context.destination); // Connect gain node to destination
+      o.start();
 
       s.save = async () => {
         await s.pg.save("sketch.jpg");
@@ -142,8 +141,6 @@ const setupSketch = () => {
       s.rY = s.map(rightHandIndexY.value, 0, 1, 0, s.height);
       s.lX = s.map(leftHandIndexX.value, 0, 1, s.width, 0);
       s.lY = s.map(leftHandIndexY.value, 0, 1, 0, s.height);
-
-      s.frequency = s.map(s.rX, 0, s.width, 200, 1000); // Map hand movement to frequency range
 
       function calculateDistance(x1, y1, x2, y2) {
         return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
@@ -185,10 +182,14 @@ const setupSketch = () => {
       }
 
       // Update frequency value dynamically based on hand movement
+      const frequency = s.map(s.rX, 0, s.width, 100, 1000); // Map hand movement to frequency range
+      const gain = s.map(s.rY, 0, s.height, 0, 1); // Map hand movement to gain range
+
+      o.frequency.setValueAtTime(frequency, context.currentTime);
+      gainNode.gain.setValueAtTime(gain, context.currentTime);
 
       // s.pen();
       // s.image(s.pg, 0, 0); // Display the pg graphics on the canvas
-      return (frequency = s.frequency);
     };
 
     s.pen = () => {
@@ -254,14 +255,6 @@ const saveSketch = async () => {
     }, 200);
   }
 };
-
-watch(
-  () => frequency,
-  (newValue) => {
-    o.frequency.value = newValue; // Update frequency value
-    console.log(o.frequency.value);
-  }
-);
 
 async function uploadSketch(sketchname, blob) {
   const { data, error } = await supabase.storage
