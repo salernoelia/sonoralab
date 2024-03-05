@@ -4,6 +4,9 @@ import time
 import mediapipe as mp
 import websocket
 import json
+import os
+
+os.nice(-20)
 
 # Create a WebSocket connection
 ws = websocket.WebSocket()
@@ -71,11 +74,11 @@ while capture.isOpened():
     fps = 1 / (currentTime - previousTime)
     previousTime = currentTime
 
-    # Displaying FPS on the image
-    cv2.putText(image, str(int(fps)) + " FPS", (10, 70), cv2.FONT_HERSHEY_COMPLEX, 1, (0, 255, 0), 2)
+    # # Displaying FPS on the image
+    # cv2.putText(image, str(int(fps)) + " FPS", (10, 70), cv2.FONT_HERSHEY_COMPLEX, 1, (0, 255, 0), 2)
 
-    # Display the resulting image
-    cv2.imshow("Hand Landmarks", image)
+    # # Display the resulting image
+    # cv2.imshow("Hand Landmarks", image)
 
     # Enter key 'q' to break the loop
     if cv2.waitKey(5) & 0xFF == ord('q'):
