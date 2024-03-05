@@ -51,11 +51,11 @@ let lY = ref(0);
 
 const socket = new WebSocket("ws://localhost:8081");
 
-socket.onopen = function (e) {
+socket.onopen = async function (e) {
   console.log("Connected to WebSocket server", e);
 };
 
-socket.onmessage = function (event) {
+socket.onmessage = async function (event) {
   const parsedData = JSON.parse(event.data);
   handData.value = parsedData;
   console.log(handData.value);

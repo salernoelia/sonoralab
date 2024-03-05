@@ -6,7 +6,7 @@ import websocket
 import json
 import os
 
-os.nice(-20)
+# os.nice(-20)
 
 # Create a WebSocket connection
 ws = websocket.WebSocket()
