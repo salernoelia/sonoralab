@@ -8,40 +8,20 @@ import json
 # Create a WebSocket connection
 ws = websocket.WebSocket()
 
-# Create event handlers
-def on_message(ws, message):
-    print(message)
-
-def on_error(ws, error):
-    print(error)
-
-def on_close(ws):
-    print("### closed ###")
-
-def on_open(ws):
-    print("Opened connection")
-
-# Assign event handlers to WebSocket instance
-ws.on_message = on_message
-ws.on_error = on_error
-ws.on_close = on_close
-ws.on_open = on_open
-
 # Connect to the WebSocket server
 ws.connect("ws://localhost:8081")
 
-# Grabbing the Holistic Model from Mediapipe and
+# Grabbing the Hand Model from Mediapipe and
 # Initializing the Model
-mp_holistic = mp.solutions.holistic
-holistic_model = mp_holistic.Holistic(
+mp_hands = mp.solutions.hands
+hands_model = mp_hands.Hands(
     static_image_mode=False, 
-    model_complexity=1, 
-    smooth_landmarks=True, 
-    min_detection_confidence=0.4,
-    min_tracking_confidence=0.4
+    max_num_hands=2,
+    min_detection_confidence=0.3,
+    min_tracking_confidence=0.3
 )
 
-# Initializing the drawing utils for drawing the facial landmarks on image
+# Initializing the drawing utils for drawing the hand landmarks on image
 mp_drawing = mp.solutions.drawing_utils
 
 # (0) in VideoCapture is used to connect to your computer's default camera
@@ -55,77 +35,36 @@ while capture.isOpened():
     # capture frame by frame
     ret, frame = capture.read()
 
-    # resizing the frame for better view
-    # frame = cv2.resize(frame, (800, 600))
-
     # Converting the from BGR to RGB
     image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
-    # Making predictions using holistic model
-    # To improve performance, optionally mark the image as not writeable to
-    # pass by reference.
+    # Making predictions using hands model
     image.flags.writeable = False
-    results = holistic_model.process(image)
+    results = hands_model.process(image)
     image.flags.writeable = True
 
     # Converting back the RGB image to BGR
     image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
 
     # Code to access landmarks
-    if results.right_hand_landmarks:
-        landmark_8 = results.right_hand_landmarks.landmark[8]
-        landmark_data_index = {
-            'hand': 'right-index',
-            'x': landmark_8.x,
-            'y': landmark_8.y,
-            'z': landmark_8.z,
-        }
-        landmark_4 = results.right_hand_landmarks.landmark[4]
-        landmark_data_thumb = {
-            'hand': 'right-thumb',
-            'x': landmark_4.x,
-            'y': landmark_4.y,
-            'z': landmark_4.z,
-        }
-        
-        
-        # print("Right Hand", landmark_data)
-        ws.send(json.dumps(landmark_data_index))
-        ws.send(json.dumps(landmark_data_thumb))
-        
-    if results.left_hand_landmarks:
-        landmark_8 = results.left_hand_landmarks.landmark[8]
-        landmark_data_index = {
-            'hand': 'left-index',
-            'x': landmark_8.x,
-            'y': landmark_8.y,
-            'z': landmark_8.z,
-        }
-        landmark_4 = results.left_hand_landmarks.landmark[4]
-        landmark_data_thumb = {
-            'hand': 'left-thumb',
-            'x': landmark_4.x,
-            'y': landmark_4.y,
-            'z': landmark_4.z,
-        }
-        # print("Left Hand", landmark_data)
-        ws.send(json.dumps(landmark_data_index))
-        ws.send(json.dumps(landmark_data_thumb))
-        
+    if results.multi_hand_landmarks:
+        for idx, hand_landmarks in enumerate(results.multi_hand_landmarks):
+            handedness = results.multi_handedness[idx].classification[0].label
+            for id, lm in enumerate(hand_landmarks.landmark):
+                if id == 8 or id == 4:  # index finger tip or thumb tip
+                    landmark_data = {
+                        'hand': f'{handedness.lower()}-{ "index" if id == 8 else "thumb"}',
+                        'x': lm.x,
+                        'y': lm.y,
+                        'z': lm.z,
+                    }
+                    ws.send(json.dumps(landmark_data))
 
-    # right hand
-    mp_drawing.draw_landmarks(
-        image, 
-        results.right_hand_landmarks, 
-        mp_holistic.HAND_CONNECTIONS
-    )
-
-    # left hand
-    mp_drawing.draw_landmarks(
-        image, 
-        results.left_hand_landmarks, 
-        mp_holistic.HAND_CONNECTIONS
-    )
+            mp_drawing.draw_landmarks(
+                image, 
+                hand_landmarks, 
+                mp_hands.HAND_CONNECTIONS
+            )
 
     # fps calculation
     currentTime = time.time()
@@ -136,14 +75,12 @@ while capture.isOpened():
     cv2.putText(image, str(int(fps)) + " FPS", (10, 70), cv2.FONT_HERSHEY_COMPLEX, 1, (0, 255, 0), 2)
 
     # Display the resulting image
-    cv2.imshow("Facial and Hand Landmarks", image)
+    cv2.imshow("Hand Landmarks", image)
 
     # Enter key 'q' to break the loop
     if cv2.waitKey(5) & 0xFF == ord('q'):
         break
 
-# When all the process is done
-# Release the capture and destroy all windows
-ws.close()
 capture.release()
 cv2.destroyAllWindows()
+ws.close()
