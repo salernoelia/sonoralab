@@ -1,6 +1,5 @@
 <template>
-  <div>
-    <h1>Sketches from Installation</h1>
+  <div class="body">
     <div>
       <div class="gallery">
         <div
@@ -9,7 +8,12 @@
           class="image-container"
         >
           <img :src="image.url.data.publicUrl" alt="Doodle" />
-          <p class="image-metadata">{{ image.metadata }}</p>
+          <!-- <p class="image-metadata">{{ image.metadata }}</p> -->
+          <p class="image-metadata">
+            Performance: {{ image.metadata.id }} <br />
+            {{ image.metadata.created_at }} <br />
+            <!-- {{ image.metadata.name }} -->
+          </p>
         </div>
       </div>
     </div>
@@ -73,6 +77,12 @@ onUnmounted(() => clearInterval(timer));
   font-family: "Courier New", Courier, monospace;
 }
 
+.body {
+  background-color: #ffffff;
+  top: 0;
+  left: 0;
+}
+
 .gallery {
   width: 100%;
   display: grid;
@@ -99,10 +109,10 @@ onUnmounted(() => clearInterval(timer));
 .image-metadata {
   position: absolute;
   bottom: 0;
-  color: rgb(255, 238, 0);
+  color: rgb(255, 255, 255);
   mix-blend-mode: difference;
-  text-align: center;
-  padding: 0.2rem;
+  text-align: left;
+  padding: 0.8rem;
   // background-color: rgba(0, 0, 0, 0.2);
 }
 </style>

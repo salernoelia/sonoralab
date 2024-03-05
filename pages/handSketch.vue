@@ -1,5 +1,11 @@
 <template>
   <div class="sketch" ref="sketchContainer">
+    <div class="cursor-left" :style="{ top: lY + 'px', left: lX + 'px' }"></div>
+    <div
+      class="cursor-right"
+      :style="{ top: rY + 'px', left: rX + 'px' }"
+    ></div>
+
     <div class="buttonContainer">
       <button class="button" @click="sketchInstance.toggleFullscreen()">
         Toggle fullscreen
@@ -35,6 +41,13 @@ let rightHandThumbZ = ref(0);
 let leftHandThumbX = ref(0);
 let leftHandThumbY = ref(0);
 let leftHandThumbZ = ref(0);
+
+let backgroundColor = "#4200FF";
+
+let rX = ref(0);
+let rY = ref(0);
+let lX = ref(0);
+let lY = ref(0);
 
 const socket = new WebSocket("ws://localhost:8081");
 
@@ -98,8 +111,8 @@ const setupSketch = () => {
     s.setup = () => {
       s.createCanvas(clientWidth, clientHeight).parent(sketchContainer.value);
       s.pg = s.createGraphics(s.width, s.height);
-      s.background(255);
-      s.pg.background(255);
+      s.background(backgroundColor);
+      s.pg.background(backgroundColor);
       s.noStroke();
 
       s.previousRightX = null;
@@ -118,20 +131,20 @@ const setupSketch = () => {
 
       s.save = async () => {
         await s.pg.save("sketch.jpg");
-        s.pg.background(255);
-        s.background(255);
+        s.pg.background(backgroundColor);
+        s.background(backgroundColor);
       };
 
       s.toggleFullscreen = () => {
         const fs = !s.fullscreen();
         s.fullscreen(fs);
-        s.pg.background(255);
-        s.background(255);
+        s.pg.background(backgroundColor);
+        s.background(backgroundColor);
       };
 
       s.clearSketch = () => {
-        s.pg.background(255);
-        s.background(255);
+        s.pg.background(backgroundColor);
+        s.background(backgroundColor);
       };
     };
 
@@ -141,6 +154,11 @@ const setupSketch = () => {
       s.rY = s.map(rightHandIndexY.value, 0, 1, 0, s.height);
       s.lX = s.map(leftHandIndexX.value, 0, 1, s.width, 0);
       s.lY = s.map(leftHandIndexY.value, 0, 1, 0, s.height);
+
+      rX.value = s.map(rightHandIndexX.value, 0, 1, s.width, 0);
+      rY.value = s.map(rightHandIndexY.value, 0, 1, 0, s.height);
+      lX.value = s.map(leftHandIndexX.value, 0, 1, s.width, 0);
+      lY.value = s.map(leftHandIndexY.value, 0, 1, 0, s.height);
 
       function calculateDistance(x1, y1, x2, y2) {
         return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
@@ -190,6 +208,7 @@ const setupSketch = () => {
 
       // s.pen();
       // s.image(s.pg, 0, 0); // Display the pg graphics on the canvas
+      return { rX, rY, lX, lY };
     };
 
     s.pen = () => {
@@ -198,7 +217,7 @@ const setupSketch = () => {
 
       // If previousRightX and previousRightY are not null, draw a line from the previous position to the current position for the right hand
       if (s.previousRightX !== null && s.previousRightY !== null) {
-        s.pg.stroke(0, 0, 255);
+        s.pg.stroke(0, 255, 0);
         s.pg.line(s.rX, s.rY, s.previousRightX, s.previousRightY);
         // s.pg.circle(s.rX, s.rY, 5);
       }
@@ -221,8 +240,8 @@ const setupSketch = () => {
       const { clientWidth, clientHeight } = sketchContainer.value;
       s.resizeCanvas(clientWidth, clientHeight);
       s.pg.resizeCanvas(clientWidth, clientHeight);
-      s.pg.background(0, 0, 255);
-      s.background(0, 0, 255);
+      s.pg.background(backgroundColor);
+      s.background(backgroundColor);
     };
   });
 };
@@ -291,6 +310,27 @@ onMounted(async () => {
   width: 100%;
   height: 100%;
 }
+
+.cursor-left {
+  position: fixed;
+  z-index: 2;
+  width: 1em;
+  height: 1em;
+  background-color: red;
+  border-radius: 50%;
+  z-index: 3;
+}
+
+.cursor-right {
+  position: fixed;
+  z-index: 2;
+  width: 1em;
+  height: 1em;
+  background-color: rgb(0, 255, 38);
+  border-radius: 50%;
+  z-index: 3;
+}
+
 .buttonContainer {
   position: absolute;
   top: 0;

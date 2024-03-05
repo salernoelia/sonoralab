@@ -6,7 +6,7 @@ import path from "path";
 const handRecognitionPy = "python/handRecognition.py";
 
 // Trigger the Python application
-exec(`python3 ${handRecognitionPy}`, (error, stdout, stderr) => {
+exec(`python3.11 ${handRecognitionPy}`, (error, stdout, stderr) => {
   if (error) {
     console.error(`Error starting Python application: ${error}`);
     return;

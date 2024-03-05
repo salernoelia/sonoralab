@@ -8,7 +8,9 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
-    "start": "nuxt start"
+    "start": "nuxt start",
+    "ionic:build": "npm run build",
+    "ionic:serve": "npm run start"
   },
   "devDependencies": {
     "@nuxt/devtools": "latest",
@@ -33,5 +35,6 @@
     "pinia": "^2.1.7",
     "supabase": "^1.145.4",
     "ws": "^8.16.0"
-  }
+  },
+  "version": "0.0.0"
 }
