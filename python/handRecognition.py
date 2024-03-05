@@ -30,6 +30,9 @@ mp_drawing = mp.solutions.drawing_utils
 # (0) in VideoCapture is used to connect to your computer's default camera
 capture = cv2.VideoCapture(0)
 
+capture.set(cv2.CAP_PROP_FRAME_WIDTH, 160*2)
+capture.set(cv2.CAP_PROP_FRAME_HEIGHT, 90*2)
+
 # Initializing current time and precious time for calculating the FPS
 previousTime = 0
 currentTime = 0
