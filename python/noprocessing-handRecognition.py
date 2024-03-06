@@ -19,9 +19,9 @@ ws.connect("ws://localhost:8081")
 mp_hands = mp.solutions.hands
 hands_model = mp_hands.Hands(
     static_image_mode=False, 
-    max_num_hands=1,
-    min_detection_confidence=0.6,
-    min_tracking_confidence=0.6
+    max_num_hands=2,
+    min_detection_confidence=0.3,
+    min_tracking_confidence=0.3
 )
 
 # Initializing the drawing utils for drawing the hand landmarks on image
@@ -47,10 +47,10 @@ while capture.isOpened():
     # Making predictions using hands model
     image.flags.writeable = False
     results = hands_model.process(image)
-    # image.flags.writeable = True
+    image.flags.writeable = True
 
     # Converting back the RGB image to BGR
-    # image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+    image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
 
     # Code to access landmarks
     if results.multi_hand_landmarks:
