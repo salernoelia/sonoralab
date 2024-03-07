@@ -2,7 +2,7 @@ import fs from "fs";
 import path from "path";
 
 export default defineEventHandler((event) => {
-  const downloadsFolderPath = "/Users/eliasalerno/Downloads/";
+  const downloadsFolderPath = "./sketches/";
 
   try {
     // Read the contents of the Downloads folder

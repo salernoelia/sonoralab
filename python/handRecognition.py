@@ -23,8 +23,15 @@ hands_model = mp_hands.Hands(
 # Initializing the drawing utils for drawing the hand landmarks on image
 mp_drawing = mp.solutions.drawing_utils
 
-# (0) in VideoCapture is used to connect to your computer's default camera
-capture = cv2.VideoCapture(5)
+
+# ----------------------------------------------------- 
+# Video Capture -> 0 is often Webcam, 
+# to find other camera run python3.11 python/findcam.py
+# -----------------------------------------------------
+
+capture = cv2.VideoCapture(0)
+#capture = cv2.VideoCapture(2)
+
 
 capture.set(cv2.CAP_PROP_FRAME_WIDTH, 160*3)
 capture.set(cv2.CAP_PROP_FRAME_HEIGHT, 90*3)
