@@ -19,7 +19,7 @@ ws.connect("ws://localhost:8081")
 mp_hands = mp.solutions.hands
 hands_model = mp_hands.Hands(
     static_image_mode=False, 
-    max_num_hands=2,
+    max_num_hands=1,
     min_detection_confidence=0.3,
     min_tracking_confidence=0.3
 )
@@ -28,7 +28,7 @@ hands_model = mp_hands.Hands(
 mp_drawing = mp.solutions.drawing_utils
 
 # (0) in VideoCapture is used to connect to your computer's default camera
-capture = cv2.VideoCapture(0)
+capture = cv2.VideoCapture(5)
 
 capture.set(cv2.CAP_PROP_FRAME_WIDTH, 160*2)
 capture.set(cv2.CAP_PROP_FRAME_HEIGHT, 90*2)

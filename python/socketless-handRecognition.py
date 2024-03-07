@@ -45,7 +45,7 @@ holistic_model = mp_holistic.Holistic(
 mp_drawing = mp.solutions.drawing_utils
 
 # (0) in VideoCapture is used to connect to your computer's default camera
-capture = cv2.VideoCapture(0)
+capture = cv2.VideoCapture(5)
 
 # Initializing current time and precious time for calculating the FPS
 previousTime = 0
@@ -137,7 +137,7 @@ while capture.isOpened():
     # cv2.putText(image, str(int(fps)) + " FPS", (10, 70), cv2.FONT_HERSHEY_COMPLEX, 1, (0, 255, 0), 2)
 
     # Display the resulting image
-    # cv2.imshow("Facial and Hand Landmarks", image)
+    cv2.imshow("Facial and Hand Landmarks", image)
 
     # Enter key 'q' to break the loop
     # if cv2.waitKey(5) & 0xFF == ord('q'):

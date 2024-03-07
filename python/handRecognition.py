@@ -4,10 +4,6 @@ import time
 import mediapipe as mp
 import websocket
 import json
-import os
-
-# os.nice(-20)
-
 # Create a WebSocket connection
 ws = websocket.WebSocket()
 
@@ -19,19 +15,27 @@ ws.connect("ws://localhost:8081")
 mp_hands = mp.solutions.hands
 hands_model = mp_hands.Hands(
     static_image_mode=False, 
-    max_num_hands=1,
-    min_detection_confidence=0.6,
-    min_tracking_confidence=0.6
+    max_num_hands=2,
+    min_detection_confidence=0.5,
+    min_tracking_confidence=0.5
 )
 
 # Initializing the drawing utils for drawing the hand landmarks on image
 mp_drawing = mp.solutions.drawing_utils
 
-# (0) in VideoCapture is used to connect to your computer's default camera
-capture = cv2.VideoCapture(0)
 
-capture.set(cv2.CAP_PROP_FRAME_WIDTH, 160*2)
-capture.set(cv2.CAP_PROP_FRAME_HEIGHT, 90*2)
+# ----------------------------------------------------- 
+# Video Capture -> 0 is often Webcam, 
+# to find other camera run python3.11 python/findcam.py
+# -----------------------------------------------------
+
+capture = cv2.VideoCapture(3)
+#capture = cv2.VideoCapture(2)
+
+
+capture.set(cv2.CAP_PROP_FRAME_WIDTH, 160*3)
+capture.set(cv2.CAP_PROP_FRAME_HEIGHT, 90*3)
+
 
 # Initializing current time and precious time for calculating the FPS
 previousTime = 0
@@ -47,10 +51,10 @@ while capture.isOpened():
     # Making predictions using hands model
     image.flags.writeable = False
     results = hands_model.process(image)
-    # image.flags.writeable = True
+    image.flags.writeable = True
 
     # Converting back the RGB image to BGR
-    # image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+    image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
 
     # Code to access landmarks
     if results.multi_hand_landmarks:
@@ -77,11 +81,11 @@ while capture.isOpened():
     fps = 1 / (currentTime - previousTime)
     previousTime = currentTime
 
-    # # Displaying FPS on the image
-    # cv2.putText(image, str(int(fps)) + " FPS", (10, 70), cv2.FONT_HERSHEY_COMPLEX, 1, (0, 255, 0), 2)
+    # Displaying FPS on the image
+    cv2.putText(image, str(int(fps)) + " FPS", (10, 70), cv2.FONT_HERSHEY_COMPLEX, 1, (0, 255, 0), 2)
 
-    # # Display the resulting image
-    # cv2.imshow("Hand Landmarks", image)
+    # Display the resulting image
+    cv2.imshow("Hand Landmarks", image)
 
     # Enter key 'q' to break the loop
     if cv2.waitKey(5) & 0xFF == ord('q'):
