@@ -42,7 +42,7 @@ let leftHandThumbX = ref(0);
 let leftHandThumbY = ref(0);
 let leftHandThumbZ = ref(0);
 
-let backgroundColor = "#4200FF";
+let backgroundColor = "#000";
 
 let rX = ref(0);
 let rY = ref(0);
@@ -216,7 +216,7 @@ const setupSketch = () => {
 
     s.pen = () => {
       // s.pg.stroke(0, 255, 0);
-      s.pg.strokeWeight(1);
+      s.pg.strokeWeight(2);
 
       // If previousRightX and previousRightY are not null, draw a line from the previous position to the current position for the right hand
       if (s.previousRightX !== null && s.previousRightY !== null) {
@@ -279,10 +279,16 @@ const saveSketch = async () => {
 };
 
 async function uploadSketch(sketchname, blob) {
-  const { data, error } = await supabase.storage
-    .from("sketches")
-    .upload(sketchname, blob);
 
+
+    const { data, error } = await supabase.storage
+      .from("sketches")
+      .upload(`sketches/${sketchname}`, blob);
+    console.log(data, error);
+ 
+    console.error("Error uploading sketch:", error);
+  
+  
   const { meta, err } = await supabase.from("sketchesMeta").insert([
     {
       name: sketchname,
