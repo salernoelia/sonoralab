@@ -47,12 +47,10 @@ gainNode.connect(context.destination);
 
 o.start();
 
-// ... existing code ...
-
 function startRecording() {
   console.log("Started Recording...");
   let dest = context.createMediaStreamDestination();
-  gainNode.connect(dest);
+  o.connect(dest);
   mediaStream = dest.stream;
   mediaRecorder = new MediaRecorder(mediaStream);
   console.log(mediaRecorder);
