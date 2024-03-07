@@ -164,6 +164,7 @@ const setupSketch = () => {
         return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
       }
 
+      // Check if data for the left or right hand is available
       if (
         (rightHandIndexX.value &&
           rightHandIndexY.value &&
@@ -195,7 +196,9 @@ const setupSketch = () => {
         ) {
           s.fill(0);
           s.pen();
-          s.image(s.pg, 0, 0); // Display the pg graphics on the canvas
+
+          // Display the pg graphics on the canvas
+          s.image(s.pg, 0, 0);
         }
       }
 

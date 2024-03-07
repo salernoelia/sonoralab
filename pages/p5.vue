@@ -1,0 +1,172 @@
+<template>
+  <div>
+    <div class="sketch" ref="sketchContainer"></div>
+  </div>
+</template>
+
+<script setup>
+import * as Tone from "tone";
+
+Tone.Master.volume.value = -10;
+let bandpass = new Tone.Filter({
+  type: "bandpass",
+  frequency: 300,
+  Q: 1,
+}).toMaster();
+
+let synth = new Tone.DuoSynth({
+  envelope: {
+    attack: 0.01,
+    decay: 0.1,
+    sustain: 0.6,
+    release: 1,
+  },
+}).connect(bandpass);
+synth.volume.value = -10;
+
+const filter = new Tone.AutoFilter({
+  frequency: 5,
+  depth: 0.9,
+})
+  .toMaster()
+  .start();
+
+let lowpass = new Tone.Filter({
+  type: "lowpass",
+  frequency: 150,
+  Q: 1,
+}).connect(filter);
+
+let monoSynth = new Tone.PolySynth({
+  maxPolyphony: 4,
+  oscillator: {
+    type: "sawtooth",
+  },
+  envelope: {
+    attack: 0.01,
+    decay: 0.1,
+    sustain: 0.6,
+    release: 1,
+  },
+  portamento: 0.05,
+}).connect(lowpass);
+
+let generateButton;
+let playButton;
+
+let root = 48;
+let scale = [
+  [0, 2, 4, 5, 7, 9, 11, 12], //Dur Major
+];
+
+let scaleNames = ["Major"];
+
+let selectedScale = scale[0];
+let selectScale;
+let numNotes = 8;
+let melody = [];
+
+let beat;
+let prevX;
+let prevY;
+
+let n;
+let note;
+
+let pt = [];
+let x = 8;
+let y = 192;
+
+function preload() {
+  selectedScale = 0;
+}
+
+function setup() {
+  createCanvas(window.innerWidth, window.innerHeight);
+  background("black");
+  generateMelody();
+  setTimeSig(8);
+  generateButton = createButton("random");
+  generateButton.position(0, 10);
+  generateButton.mousePressed(generateMelody);
+
+  playButton = createButton("play");
+  playButton.position(60, 10);
+  playButton.mousePressed(playMelody);
+}
+
+function draw() {
+  //delete this @Elia
+  if (prevX !== undefined && prevY !== undefined) {
+    stroke("white");
+    strokeWeight(2);
+    line(prevX, prevY, mouseX, mouseY);
+  }
+
+  prevX = mouseX;
+  prevY = mouseY;
+  //--------
+
+  let lowpassFreq = map(mouseY, window.innerHeight, 0, 200, 1000);
+  lowpass.frequency.value = lowpassFreq;
+
+  let bandpassFreq = map(mouseY, window.innerHeight, 0, 250, 400);
+  bandpass.frequency.value = bandpassFreq;
+
+  const lfoFrequency = map(mouseX, 0, window.innerWidth, 0, 10);
+  filter.frequency.value = lfoFrequency;
+}
+
+function thisScale() {
+  selectedScale = selectScale.value();
+  generateMelody();
+}
+
+function melodyIndex(note) {
+  let melIndex = note - root;
+  return scale[selectedScale].indexOf(melIndex);
+}
+
+function setTimeSig(ts) {
+  Tone.Transport.timeSignature = [ts, 4];
+}
+
+// Start & Stop isch e chli am inneschisse
+function playMelody() {
+  if (Tone.Transport.state == "started") {
+    background("black");
+    Tone.Transport.stop();
+    Tone.Transport.cancel();
+    playButton.html("play");
+  } else {
+    Tone.Transport.cancel();
+    background("black");
+    Tone.Transport.scheduleRepeat(setMelody, "4n");
+    Tone.Transport.start();
+    playButton.html("stop");
+  }
+}
+
+function setMelody() {
+  beat = Tone.Transport.position.split(":")[1];
+  let midiNote = Tone.Frequency(melody[beat], "midi");
+  synth.triggerAttackRelease(midiNote);
+  monoSynth.triggerAttackRelease(midiNote);
+}
+
+function generateMelody() {
+  background("black");
+  melody = [];
+  beat = 0;
+  if (melody.length == numNotes) {
+    melody.splice(0, melody.length);
+  }
+  for (let i = 0; i < numNotes; i++) {
+    n = int(random(scale[selectedScale].length));
+    note = root + scale[selectedScale][n];
+    melody.push(note);
+  }
+}
+</script>
+
+<style lang="scss" scoped></style>
