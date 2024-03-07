@@ -7,11 +7,25 @@
       src="https://cdnjs.cloudflare.com/ajax/libs/tone/13.0.1/Tone.min.js"
       type="text/javascript"
     ></script>
-    <link rel="stylesheet" type="text/css" href="style.css" />
+
     <meta charset="utf-8" />
   </head>
   <body>
     <script>
+      let handData = { value: {} };
+      let leftHandIndexX = { value: 0 };
+      let leftHandIndexY = { value: 0 };
+      let leftHandIndexZ = { value: 0 };
+      let rightHandIndexX = { value: 0 };
+      let rightHandIndexY = { value: 0 };
+      let rightHandIndexZ = { value: 0 };
+      let leftHandThumbX = { value: 0 };
+      let leftHandThumbY = { value: 0 };
+      let leftHandThumbZ = { value: 0 };
+      let rightHandThumbX = { value: 0 };
+      let rightHandThumbY = { value: 0 };
+      let rightHandThumbZ = { value: 0 };
+
       const ws = new WebSocket("ws://localhost:8081");
 
       ws.onopen = () => {
@@ -19,7 +33,27 @@
       };
 
       ws.onmessage = (event) => {
-        console.log(event.data);
+        const parsedData = JSON.parse(event.data);
+        handData.value = parsedData;
+        console.log(handData.value);
+
+        if (handData.value.hand == "left-index") {
+          leftHandIndexX.value = handData.value.x;
+          leftHandIndexY.value = handData.value.y;
+          leftHandIndexZ.value = handData.value.z;
+        } else if (handData.value.hand == "right-index") {
+          rightHandIndexX.value = handData.value.x;
+          rightHandIndexY.value = handData.value.y;
+          rightHandIndexZ.value = handData.value.z;
+        } else if (handData.value.hand == "left-thumb") {
+          leftHandThumbX.value = handData.value.x;
+          leftHandThumbY.value = handData.value.y;
+          leftHandThumbZ.value = handData.value.z;
+        } else if (handData.value.hand == "right-thumb") {
+          rightHandThumbX.value = handData.value.x;
+          rightHandThumbY.value = handData.value.y;
+          rightHandThumbZ.value = handData.value.z;
+        }
       };
 
       ws.onerror = (error) => {
@@ -106,7 +140,7 @@
 
       function setup() {
         createCanvas(window.innerWidth, window.innerHeight);
-        background("black");
+        background(150);
         generateMelody();
         setTimeSig(8);
         generateButton = createButton("random");
@@ -119,24 +153,28 @@
       }
 
       function draw() {
-        //delete this @Elia
+        x = map(rightHandIndexX.value, 1, 0, 0, window.innerWidth);
+        y = map(rightHandIndexY.value, 0, 1, 0, window.innerHeight);
+        fill(255);
+        ellipse(x, y, 50, 50);
+        // Delete this if block @Elia
         if (prevX !== undefined && prevY !== undefined) {
           stroke("white");
           strokeWeight(2);
-          line(prevX, prevY, mouseX, mouseY);
+          line(prevX, prevY, rightHandIndexX.value, rightHandIndexY.value);
         }
 
-        prevX = mouseX;
-        prevY = mouseY;
+        prevX = rightHandIndexX.value;
+        prevY = rightHandIndexY.value;
         //--------
 
-        let lowpassFreq = map(mouseY, window.innerHeight, 0, 200, 1000);
+        let lowpassFreq = map(y, window.innerHeight, 0, 200, 1000);
         lowpass.frequency.value = lowpassFreq;
 
-        let bandpassFreq = map(mouseY, window.innerHeight, 0, 250, 400);
+        let bandpassFreq = map(y, window.innerHeight, 0, 250, 400);
         bandpass.frequency.value = bandpassFreq;
 
-        const lfoFrequency = map(mouseX, 0, window.innerWidth, 0, 10);
+        const lfoFrequency = map(x, 0, window.innerWidth, 0, 10);
         filter.frequency.value = lfoFrequency;
       }
 
