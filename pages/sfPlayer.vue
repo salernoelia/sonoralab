@@ -33,7 +33,10 @@ let chunks = [];
 let gainNode = context.createGain();
 
 // Load the instrument
-Soundfont.instrument(context, "acoustic_grand_piano").then(function (piano) {
+Soundfont.instrument(context, "acoustic_grand_piano", {
+  soundfont: "MusyngKite",
+  path: "./soundfonts/Drums_4-Op FM.sf2",
+}).then(function (piano) {
   instrument = piano;
   instrument.play("C2");
   setupAudioNodes();
