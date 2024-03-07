@@ -29,7 +29,7 @@ mp_drawing = mp.solutions.drawing_utils
 # to find other camera run python3.11 python/findcam.py
 # -----------------------------------------------------
 
-capture = cv2.VideoCapture(0)
+capture = cv2.VideoCapture(3)
 #capture = cv2.VideoCapture(2)
 
 

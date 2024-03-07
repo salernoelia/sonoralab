@@ -7,13 +7,14 @@
           :key="image.id"
           class="image-container"
         >
-          <img :src="image.url.data.publicUrl" alt="Doodle" />
+        <img :src="image.url.data.publicUrl" alt="Doodle" />
+
           <!-- <p class="image-metadata">{{ image.metadata }}</p> -->
           <p class="image-metadata">
-            Performance: {{ image.metadata.id }} <br />
-            {{ image.metadata.created_at }} <br />
-            <!-- {{ image.metadata.name }} -->
-          </p>
+  Performance: {{ image.metadata ? image.metadata.id : 'N/A' }} <br />
+  {{ image.metadata ? image.metadata.created_at : 'N/A' }} <br />
+</p>
+
         </div>
       </div>
     </div>
@@ -31,7 +32,7 @@ async function fetchImages() {
     console.log("Fetching images...");
     const { data: images, error } = await supabase.storage
       .from("sketches")
-      .list();
+      .list("sketches");
     const { data: metadata, error: metaError } = await supabase
       .from("sketchesMeta")
       .select("*");
@@ -44,13 +45,16 @@ async function fetchImages() {
       // Combine image data with metadata
       imagesWithMetadata.value = images.map((image) => {
         const metadataItem = metadata.find((item) => item.name === image.name);
+        
+        // url = supabase.storage.from("sketches").getPublicUrl(image.name.replace(/ /g, '%20'));
         return {
           ...image,
           metadata: metadataItem,
-          url: supabase.storage.from("sketches").getPublicUrl(image.name),
+          url: supabase.storage.from("sketches").getPublicUrl(`sketches/${image.name}`),
+
         };
       });
-
+      console.log("Images with metadata:", imagesWithMetadata.value);
       // Sort the images after mapping
       imagesWithMetadata.value.sort((a, b) => {
         return new Date(b.created_at) - new Date(a.created_at);
@@ -66,6 +70,7 @@ onMounted(fetchImages);
 
 // Fetch images periodically
 const timer = setInterval(fetchImages, 1000);
+
 
 // Clear interval on component unmount
 onUnmounted(() => clearInterval(timer));
