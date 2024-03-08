@@ -98,7 +98,7 @@ hgroup,
 menu,
 nav,
 section {
-  display: block;
+  //   display: block;
 }
 body {
   line-height: 1;
@@ -124,7 +124,6 @@ table {
 }
 
 * {
-  //   box-sizing: border-box;
   font-family: "Courier New", Courier, monospace;
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
