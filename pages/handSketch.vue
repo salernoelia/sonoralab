@@ -130,7 +130,7 @@ const setupSketch = () => {
       o.start();
 
       s.save = async () => {
-        await s.pg.save("sketch.jpg");
+        await s.pg.save("sketch.png");
         s.pg.background(backgroundColor);
         s.background(backgroundColor);
       };

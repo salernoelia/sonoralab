@@ -8,7 +8,7 @@
     <h1 class="performance-title">
       Performance: {{ images[0].performance_id }}
     </h1>
-    <p class="performance-date">Created: {{ images[0].created_at }}</p>
+    <p class="performance-date">Created: {{ images[0].updated_at }}</p>
   </div>
 </template>
 

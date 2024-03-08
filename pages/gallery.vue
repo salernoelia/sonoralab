@@ -8,7 +8,7 @@
             <div class="image-metadata">
               <p>{{ image.performance_name }}</p>
               <p>{{ image.name }}</p>
-              <p>{{ image.created_at }}</p>
+              <p>{{ image.updated_at }}</p>
             </div>
           </nuxt-link>
         </div>
@@ -64,14 +64,15 @@ const fetchImages = async (metadata) => {
         path: meta.path,
         url: supabase.storage.from("sketches").getPublicUrl(`${meta.path}`),
       });
+      // console.log("Matching File:", matchingFile.created_at);
     }
   });
 
   // console.log("Matching Files:", matchingFiles);
 
-  matchingFiles.sort((a, b) => {
-    return new Date(a.created_at) - new Date(b.created_at);
-  });
+  // matchingFiles.sort((a, b) => {
+  //   return new Date(a.created_at) - new Date(b.created_at);
+  // });
 
   // console.log("Sorted Files:", matchingFiles);
 
