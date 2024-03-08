@@ -1,14 +1,22 @@
 <template>
-  <div>
+  <div class="main">
     <div class="body">
       <div class="gallery-container">
         <div class="info-container">
-          <h1 class="title">Sonora Lab</h1>
-          <p class="description">
-            Welcome to the Sonora Lab. Here you can find all the performances
-            created by the Sonora Lab. Click on a performance to view the
-            details.
-          </p>
+          <div class="info-container_top">
+            <h1 class="title">Sonora Lab</h1>
+            <p class="description">
+              Welcome to the Sonora Lab. Here you can find all the performances
+              created by the Sonora Lab. Click on a performance to view the
+              details.
+            </p>
+          </div>
+          <div class="info-container_bottom">
+            <p class="description">A Project by:</p>
+            <p class="description.bold">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit.
+            </p>
+          </div>
         </div>
 
         <div class="gallery">
@@ -135,6 +143,7 @@ body:-webkit-scrollbar {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 300px));
   gap: 1rem;
+  justify-content: center;
   overflow-y: scroll;
 }
 
@@ -164,13 +173,26 @@ body:-webkit-scrollbar {
 .info-container {
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   width: 30%;
   text-align: left;
-  padding-right: 1rem;
-  gap: 1rem;
 
   .title {
     margin: 0;
+  }
+}
+
+.info-container_top {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.description {
+  margin: 0;
+  font-size: 1rem;
+  .bold {
+    font-weight: bold;
   }
 }
 .page-enter-active,
