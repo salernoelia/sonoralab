@@ -93,7 +93,7 @@ const setupSketch = () => {
       s.previousX = null;
       s.previousY = null;
       s.save = async () => {
-        await s.pg.save("sketch.jpg");
+        await s.pg.save("sketch.png");
         s.pg.background(0, 0, 255);
       };
     };

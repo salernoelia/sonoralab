@@ -42,7 +42,7 @@ let leftHandThumbX = ref(0);
 let leftHandThumbY = ref(0);
 let leftHandThumbZ = ref(0);
 
-let backgroundColor = "#4200FF";
+let backgroundColor = "#000";
 
 let rX = ref(0);
 let rY = ref(0);
@@ -130,7 +130,7 @@ const setupSketch = () => {
       o.start();
 
       s.save = async () => {
-        await s.pg.save("sketch.jpg");
+        await s.pg.save("sketch.png");
         s.pg.background(backgroundColor);
         s.background(backgroundColor);
       };
@@ -281,15 +281,17 @@ const saveSketch = async () => {
 async function uploadSketch(sketchname, blob) {
   const { data, error } = await supabase.storage
     .from("sketches")
-    .upload(sketchname, blob);
+    .upload(`sketches/${sketchname}`, blob);
 
   const { meta, err } = await supabase.from("sketchesMeta").insert([
     {
       name: sketchname,
+      path: `sketches/${sketchname}`,
     },
   ]);
 
-  console.log(sketchname, error);
+  console.log("Meta Uploaded of sketch:", meta);
+  // console.log(sketchname, error);
 }
 
 onMounted(async () => {

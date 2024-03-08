@@ -1,20 +1,35 @@
 <template>
-  <div class="body">
-    <div>
-      <div class="gallery">
-        <div
-          v-for="image in imagesWithMetadata"
-          :key="image.id"
-          class="image-container"
-        >
-        <img :src="image.url.data.publicUrl" alt="Doodle" />
+  <div class="main">
+    <div class="body">
+      <div class="gallery-container">
+        <div class="info-container">
+          <div class="info-container_top">
+            <h1 class="title">Sonora Lab</h1>
+            <p class="description">
+              Welcome to the Sonora Lab. Here you can find all the performances
+              created by the Sonora Lab. Click on a performance to view the
+              details.
+            </p>
+          </div>
+          <div class="info-container_bottom">
+            <p class="description">A Project by:</p>
+            <p class="description.bold">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit.
+            </p>
+          </div>
+        </div>
 
-          <!-- <p class="image-metadata">{{ image.metadata }}</p> -->
-          <p class="image-metadata">
-  Performance: {{ image.metadata ? image.metadata.id : 'N/A' }} <br />
-  {{ image.metadata ? image.metadata.created_at : 'N/A' }} <br />
-</p>
-
+        <div class="gallery">
+          <div v-for="image in images" :key="image.id" class="image-container">
+            <NuxtLink :to="`/performance/${image.id}`">
+              <img :src="image.url.data.publicUrl" alt="Gallery Image" />
+              <div class="image-metadata">
+                <p>{{ image.performance_name }}</p>
+                <p>Performance {{ image.performance_id }}</p>
+                <p>{{ image.updated_at }}</p>
+              </div>
+            </NuxtLink>
+          </div>
         </div>
       </div>
     </div>
@@ -23,81 +38,116 @@
 
 <script setup>
 const supabase = useSupabaseClient();
-const imagesWithMetadata = ref([]);
-let sortedImages = ref([]);
+const images = ref([]);
+let metadata = ref([]);
 
-// Fetch list of objects (images) in the avatars bucket
-async function fetchImages() {
-  try {
-    console.log("Fetching images...");
-    const { data: images, error } = await supabase.storage
-      .from("sketches")
-      .list("sketches");
-    const { data: metadata, error: metaError } = await supabase
-      .from("sketchesMeta")
-      .select("*");
-    if (error || metaError) {
-      console.error(
-        "Error fetching images:",
-        error?.message || metaError?.message
-      );
-    } else {
-      // Combine image data with metadata
-      imagesWithMetadata.value = images.map((image) => {
-        const metadataItem = metadata.find((item) => item.name === image.name);
-        
-        // url = supabase.storage.from("sketches").getPublicUrl(image.name.replace(/ /g, '%20'));
-        return {
-          ...image,
-          metadata: metadataItem,
-          url: supabase.storage.from("sketches").getPublicUrl(`sketches/${image.name}`),
+const fetchMeta = async () => {
+  console.log("Fetching Metadata...");
+  const { data: metadata, error } = await supabase
+    .from("sketchesMeta")
+    .select("*");
 
-        };
-      });
-      console.log("Images with metadata:", imagesWithMetadata.value);
-      // Sort the images after mapping
-      imagesWithMetadata.value.sort((a, b) => {
-        return new Date(b.created_at) - new Date(a.created_at);
-      });
-    }
-  } catch (error) {
-    console.error("Error fetching images:", error.message);
+  fetchImages(metadata);
+};
+
+const fetchImages = async (metadata) => {
+  const { data: files, error: filesError } = await supabase.storage
+    .from("sketches")
+    .list("sketches/");
+
+  // console.log("Files:", files);
+  if (filesError) {
+    console.error("Error fetching files:", filesError);
+    return;
   }
-}
 
-// Fetch images on component mount
-onMounted(fetchImages);
+  // console.log("Metadata", metadata);
 
-// Fetch images periodically
-const timer = setInterval(fetchImages, 1000);
+  // console.log("Unfiltered Files:", files);
 
+  // Filter out files that match metadata.path
+  const matchingFiles = [];
 
-// Clear interval on component unmount
+  // Iterate over each metadata object
+  metadata.forEach((meta) => {
+    // Find the corresponding file in the files array
+    const matchingFile = files.find((file) => file.name === meta.name);
+
+    // If a matching file is found, add it to the matchingFilesArray
+    if (matchingFile) {
+      matchingFiles.push({
+        ...matchingFile,
+        created_at: meta.created_at,
+        performance_name: meta.performance_name,
+        performance_id: meta.id,
+        path: meta.path,
+        url: supabase.storage.from("sketches").getPublicUrl(`${meta.path}`),
+      });
+      // console.log("Matching File:", matchingFile.created_at);
+    }
+  });
+
+  // console.log("Matching Files:", matchingFiles);
+
+  // matchingFiles.sort((a, b) => {
+  //   return new Date(a.created_at) - new Date(b.created_at);
+  // });
+
+  // console.log("Sorted Files:", matchingFiles);
+
+  images.value = matchingFiles;
+};
+
+onMounted(fetchMeta);
+const timer = setInterval(fetchMeta, 1000);
 onUnmounted(() => clearInterval(timer));
 </script>
 
 <style lang="scss" scoped>
 * {
-  box-sizing: border-box;
+  // box-sizing: border-box;
   font-family: "Courier New", Courier, monospace;
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }
 
+.body::-webkit-scrollbar {
+  display: none;
+}
+
+.gallery-container:-webkit-scrollbar {
+  display: none;
+}
+body:-webkit-scrollbar {
+  display: none;
+}
 .body {
-  background-color: #ffffff;
-  top: 0;
-  left: 0;
+  overflow-y: hidden; /* Hide vertical scrollbar */
+  overflow-x: hidden; /* Hide horizontal scrollbar */
+}
+
+.gallery-container {
+  display: flex;
+
+  position: absolute;
+  inset: 0;
+  padding: 2rem;
+
+  // overflow-y: hidden; /* Hide vertical scrollbar */
+  // overflow-x: hidden; /* Hide horizontal scrollbar */
 }
 
 .gallery {
+  height: 100%;
   width: 100%;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(300px, 300px));
   gap: 1rem;
+  justify-content: center;
+  overflow-y: scroll;
 }
 
 .image-container {
-  width: 100%;
-  height: 0;
   padding-top: 100%; /* Create a quadratic container */
   position: relative;
 }
@@ -118,6 +168,43 @@ onUnmounted(() => clearInterval(timer));
   mix-blend-mode: difference;
   text-align: left;
   padding: 0.8rem;
-  // background-color: rgba(0, 0, 0, 0.2);
+}
+
+.info-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 30%;
+  text-align: left;
+
+  .title {
+    margin: 0;
+  }
+}
+
+.info-container_top {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.description {
+  margin: 0;
+  font-size: 1rem;
+  .bold {
+    font-weight: bold;
+  }
+}
+.page-enter-active,
+.page-leave-active {
+  transition: all 0.4s;
+}
+.page-enter-from,
+.page-leave-to {
+  transform: translateX(100%);
+}
+.page-enter-to,
+.page-leave-from {
+  transform: translateX(0);
 }
 </style>
