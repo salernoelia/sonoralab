@@ -133,27 +133,12 @@ body:-webkit-scrollbar {
   height: 100%;
   width: 100%;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(300px, 300px));
   gap: 1rem;
   overflow-y: scroll;
 }
 
-.info-container {
-  display: flex;
-  flex-direction: column;
-  width: 30%;
-  text-align: left;
-  padding-right: 1rem;
-  gap: 1rem;
-
-  .title {
-    margin: 0;
-  }
-}
-
 .image-container {
-  width: 100%;
-  height: 0;
   padding-top: 100%; /* Create a quadratic container */
   position: relative;
 }
@@ -174,9 +159,20 @@ body:-webkit-scrollbar {
   mix-blend-mode: difference;
   text-align: left;
   padding: 0.8rem;
-  // background-color: rgba(0, 0, 0, 0.2);
 }
 
+.info-container {
+  display: flex;
+  flex-direction: column;
+  width: 30%;
+  text-align: left;
+  padding-right: 1rem;
+  gap: 1rem;
+
+  .title {
+    margin: 0;
+  }
+}
 .page-enter-active,
 .page-leave-active {
   transition: all 0.4s;
