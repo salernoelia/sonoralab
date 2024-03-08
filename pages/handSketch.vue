@@ -216,7 +216,7 @@ const setupSketch = () => {
 
     s.pen = () => {
       // s.pg.stroke(0, 255, 0);
-      s.pg.strokeWeight(2);
+      s.pg.strokeWeight(1);
 
       // If previousRightX and previousRightY are not null, draw a line from the previous position to the current position for the right hand
       if (s.previousRightX !== null && s.previousRightY !== null) {
@@ -279,19 +279,15 @@ const saveSketch = async () => {
 };
 
 async function uploadSketch(sketchname, blob) {
+  const { data, error } = await supabase.storage
+    .from("sketches")
+    .upload(`sketches/${sketchname}`, blob);
 
-
-    const { data, error } = await supabase.storage
-      .from("sketches")
-      .upload(`sketches/${sketchname}`, blob);
-    console.log(data, error);
- 
-    console.error("Error uploading sketch:", error);
-  
-  
   const { meta, err } = await supabase.from("sketchesMeta").insert([
     {
       name: sketchname,
+      path: `sketches/${sketchname}`,
+      publicUrl: data.publicURL,
     },
   ]);
 

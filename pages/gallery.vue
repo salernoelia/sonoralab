@@ -2,22 +2,13 @@
   <div class="body">
     <div class="gallery-container">
       <div class="gallery">
-        <div
-          v-for="image in imagesWithMetadata"
-          :key="image.id"
-          class="image-container"
-
-        >
-          <NuxtLink :to="`/performance/${image.metadata.id}`">
-            
-          <img :src="image.url.data.publicUrl" alt="Doodle" />
-
-          <!-- <p class="image-metadata">{{ image.metadata }}</p> -->
-          <p class="image-metadata">
-            Performance: {{ image.metadata ? image.metadata.id : "N/A" }} <br />
-            {{ image.metadata ? image.metadata.created_at : "N/A" }} <br />
-          </p>
-          </NuxtLink>
+        <div v-for="image in images" :key="image.id" class="image-container">
+          <img :src="image.url.data.publicUrl" alt="Gallery Image" />
+          <div class="image-metadata">
+            <p>{{ image.performance_name }}</p>
+            <p>{{ image.name }}</p>
+            <p>{{ image.created_at }}</p>
+          </div>
         </div>
       </div>
     </div>
@@ -26,56 +17,66 @@
 
 <script setup>
 const supabase = useSupabaseClient();
-const imagesWithMetadata = ref([]);
-let sortedImages = ref([]);
+const images = ref([]);
+let metadata = ref([]);
 
-// Fetch list of objects (images) in the avatars bucket
-async function fetchImages() {
-  try {
-    console.log("Fetching images...");
-    const { data: images, error } = await supabase.storage
-      .from("sketches")
-      .list("sketches");
-    const { data: metadata, error: metaError } = await supabase
-      .from("sketchesMeta")
-      .select("*");
-    if (error || metaError) {
-      console.error(
-        "Error fetching images:",
-        error?.message || metaError?.message
-      );
-    } else {
-      // Combine image data with metadata
-      imagesWithMetadata.value = images.map((image) => {
-        const metadataItem = metadata.find((item) => item.name === image.name);
+const fetchMeta = async () => {
+  console.log("Fetching Metadata...");
+  const { data: metadata, error } = await supabase
+    .from("sketchesMeta")
+    .select("*");
 
-        // url = supabase.storage.from("sketches").getPublicUrl(image.name.replace(/ /g, '%20'));
-        return {
-          ...image,
-          metadata: metadataItem,
-          url: supabase.storage
-            .from("sketches")
-            .getPublicUrl(`sketches/${image.name}`),
-        };
-      });
-      console.log("Images with metadata:", imagesWithMetadata.value);
-      // Sort the images after mapping
-      imagesWithMetadata.value.sort((a, b) => {
-        return new Date(b.created_at) - new Date(a.created_at);
+  fetchImages(metadata);
+};
+
+const fetchImages = async (metadata) => {
+  const { data: files, error: filesError } = await supabase.storage
+    .from("sketches")
+    .list("sketches/");
+
+  console.log("Files:", files);
+  if (filesError) {
+    console.error("Error fetching files:", filesError);
+    return;
+  }
+
+  console.log("Metadata", metadata);
+
+  console.log("Unfiltered Files:", files);
+
+  // Filter out files that match metadata.path
+  const matchingFiles = [];
+
+  // Iterate over each metadata object
+  metadata.forEach((meta) => {
+    // Find the corresponding file in the files array
+    const matchingFile = files.find((file) => file.name === meta.name);
+
+    // If a matching file is found, add it to the matchingFilesArray
+    if (matchingFile) {
+      matchingFiles.push({
+        ...matchingFile,
+        created_at: meta.created_at,
+        performance_name: meta.performance_name,
+        performance_id: meta.id,
+        url: supabase.storage.from("sketches").getPublicUrl(`${meta.path}`),
       });
     }
-  } catch (error) {
-    console.error("Error fetching images:", error.message);
-  }
-}
+  });
 
-// Fetch images on component mount
-onMounted(fetchImages);
+  console.log("Matching Files:", matchingFiles);
 
-// Fetch images periodically
-const timer = setInterval(fetchImages, 1000);
+  matchingFiles.sort((a, b) => {
+    return new Date(b.created_at) - new Date(a.created_at);
+  });
 
-// Clear interval on component unmount
+  console.log("Sorted Files:", matchingFiles);
+
+  images.value = matchingFiles;
+};
+
+onMounted(fetchMeta);
+const timer = setInterval(fetchMeta, 1000);
 onUnmounted(() => clearInterval(timer));
 </script>
 
@@ -116,7 +117,6 @@ body:-webkit-scrollbar {
 }
 
 .gallery {
-  background-color: #f3f3f3;
   height: 100%;
   width: 100%;
   display: grid;
@@ -144,7 +144,7 @@ body:-webkit-scrollbar {
 .image-metadata {
   position: absolute;
   bottom: 0;
-  color: rgb(251, 255, 0);
+  color: rgb(8, 0, 255);
   mix-blend-mode: difference;
   text-align: left;
   padding: 0.8rem;
