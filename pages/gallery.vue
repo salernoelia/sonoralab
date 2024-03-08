@@ -70,7 +70,7 @@ const fetchImages = async (metadata) => {
   // console.log("Matching Files:", matchingFiles);
 
   matchingFiles.sort((a, b) => {
-    return new Date(b.created_at) - new Date(a.created_at);
+    return new Date(a.created_at) - new Date(b.created_at);
   });
 
   // console.log("Sorted Files:", matchingFiles);

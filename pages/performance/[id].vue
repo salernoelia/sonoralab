@@ -1,8 +1,14 @@
 <template>
   <div v-if="merged">
-    <h1>Performance: {{ images[0].performance_id }}</h1>
-
-    <img :src="images[0].url.data.publicUrl" alt="Performance sketch" />
+    <img
+      class="performance-image"
+      :src="images[0].url.data.publicUrl"
+      alt="Performance sketch"
+    />
+    <h1 class="performance-title">
+      Performance: {{ images[0].performance_id }}
+    </h1>
+    <p class="performance-date">Created: {{ images[0].created_at }}</p>
   </div>
 </template>
 
