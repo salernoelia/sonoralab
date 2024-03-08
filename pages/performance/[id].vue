@@ -1,14 +1,18 @@
 <template>
-  <div v-if="merged">
-    <img
-      class="performance-image"
-      :src="images[0].url.data.publicUrl"
-      alt="Performance sketch"
-    />
-    <h1 class="performance-title">
-      Performance: {{ images[0].performance_id }}
-    </h1>
-    <p class="performance-date">Created: {{ images[0].updated_at }}</p>
+  <div class="parent" v-if="merged">
+    <div class="child">
+      <img
+        class="performance-image"
+        :src="images[0].url.data.publicUrl"
+        alt="Performance sketch"
+      />
+      <div class="performance-info">
+        <h1 class="performance-title">
+          Performance {{ images[0].performance_id }}
+        </h1>
+        <p class="performance-date">Created: {{ images[0].updated_at }}</p>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -62,5 +66,55 @@ onMounted(fetchPerformanceSketch);
 </script>
 
 <style lang="scss" scoped>
-/* Add your styles here */
+.body::-webkit-scrollbar {
+  display: none;
+}
+
+body {
+  overflow: hidden;
+}
+
+.parent {
+  padding: 3rem;
+
+  overflow: hidden;
+  position: absolute;
+  inset: 0;
+  justify-content: center;
+  align-items: center;
+}
+
+.child {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.performance-image {
+  width: 70%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.performance-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-start;
+  width: 50%;
+  height: 100%;
+  padding-left: 1rem;
+  gap: 1rem;
+
+  h1 {
+    font-size: 2rem;
+    margin: 0;
+  }
+  p {
+    margin: 0;
+  }
+}
 </style>

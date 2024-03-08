@@ -7,7 +7,7 @@
             <img :src="image.url.data.publicUrl" alt="Gallery Image" />
             <div class="image-metadata">
               <p>{{ image.performance_name }}</p>
-              <p>{{ image.name }}</p>
+              <p>Performance {{ image.performance_id }}</p>
               <p>{{ image.updated_at }}</p>
             </div>
           </nuxt-link>
@@ -85,13 +85,6 @@ onUnmounted(() => clearInterval(timer));
 </script>
 
 <style lang="scss" scoped>
-* {
-  box-sizing: border-box;
-  font-family: "Courier New", Courier, monospace;
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
-}
-
 .body::-webkit-scrollbar {
   display: none;
 }
@@ -148,7 +141,7 @@ body:-webkit-scrollbar {
 .image-metadata {
   position: absolute;
   bottom: 0;
-  color: rgb(8, 0, 255);
+  color: rgb(255, 255, 255);
   mix-blend-mode: difference;
   text-align: left;
   padding: 0.8rem;
