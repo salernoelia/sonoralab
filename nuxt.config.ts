@@ -1,5 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+  css: ["assets/css/main.scss"],
+
   devtools: { enabled: true },
   ssr: false,
 
@@ -10,5 +12,7 @@ export default defineNuxtConfig({
     key: process.env.SUPABASE_KEY,
   },
 
-  css: ["assets/css/main.scss"],
+  app: {
+    pageTransition: { name: "page", mode: "out-in" },
+  },
 });

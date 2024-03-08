@@ -1,16 +1,27 @@
 <template>
-  <div class="body">
-    <div class="gallery-container">
-      <div class="gallery">
-        <div v-for="image in images" :key="image.id" class="image-container">
-          <nuxt-link :to="`performance/${image.id}`">
-            <img :src="image.url.data.publicUrl" alt="Gallery Image" />
-            <div class="image-metadata">
-              <p>{{ image.performance_name }}</p>
-              <p>Performance {{ image.performance_id }}</p>
-              <p>{{ image.updated_at }}</p>
-            </div>
-          </nuxt-link>
+  <div>
+    <div class="body">
+      <div class="gallery-container">
+        <div class="info-container">
+          <h1 class="title">Sonora Lab</h1>
+          <p class="description">
+            Welcome to the Sonora Lab. Here you can find all the performances
+            created by the Sonora Lab. Click on a performance to view the
+            details.
+          </p>
+        </div>
+
+        <div class="gallery">
+          <div v-for="image in images" :key="image.id" class="image-container">
+            <NuxtLink :to="`/performance/${image.id}`">
+              <img :src="image.url.data.publicUrl" alt="Gallery Image" />
+              <div class="image-metadata">
+                <p>{{ image.performance_name }}</p>
+                <p>Performance {{ image.performance_id }}</p>
+                <p>{{ image.updated_at }}</p>
+              </div>
+            </NuxtLink>
+          </div>
         </div>
       </div>
     </div>
@@ -85,6 +96,13 @@ onUnmounted(() => clearInterval(timer));
 </script>
 
 <style lang="scss" scoped>
+* {
+  // box-sizing: border-box;
+  font-family: "Courier New", Courier, monospace;
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
 .body::-webkit-scrollbar {
   display: none;
 }
@@ -98,8 +116,6 @@ body:-webkit-scrollbar {
 .body {
   overflow-y: hidden; /* Hide vertical scrollbar */
   overflow-x: hidden; /* Hide horizontal scrollbar */
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
 }
 
 .gallery-container {
@@ -107,10 +123,10 @@ body:-webkit-scrollbar {
 
   position: absolute;
   inset: 0;
-  padding: 1rem;
+  padding: 2rem;
 
-  overflow-y: hidden; /* Hide vertical scrollbar */
-  overflow-x: hidden; /* Hide horizontal scrollbar */
+  // overflow-y: hidden; /* Hide vertical scrollbar */
+  // overflow-x: hidden; /* Hide horizontal scrollbar */
 }
 
 .gallery {
@@ -120,6 +136,19 @@ body:-webkit-scrollbar {
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 1rem;
   overflow-y: scroll;
+}
+
+.info-container {
+  display: flex;
+  flex-direction: column;
+  width: 30%;
+  text-align: left;
+  padding-right: 1rem;
+  gap: 1rem;
+
+  .title {
+    margin: 0;
+  }
 }
 
 .image-container {
@@ -146,5 +175,18 @@ body:-webkit-scrollbar {
   text-align: left;
   padding: 0.8rem;
   // background-color: rgba(0, 0, 0, 0.2);
+}
+
+.page-enter-active,
+.page-leave-active {
+  transition: all 0.4s;
+}
+.page-enter-from,
+.page-leave-to {
+  transform: translateX(100%);
+}
+.page-enter-to,
+.page-leave-from {
+  transform: translateX(0);
 }
 </style>

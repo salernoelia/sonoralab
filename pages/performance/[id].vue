@@ -6,11 +6,16 @@
         :src="images[0].url.data.publicUrl"
         alt="Performance sketch"
       />
+
       <div class="performance-info">
         <h1 class="performance-title">
           Performance {{ images[0].performance_id }}
         </h1>
         <p class="performance-date">Created: {{ images[0].updated_at }}</p>
+
+        <NuxtLink class="button-main" to="/gallery">
+          <button>< Back to Gallery</button>
+        </NuxtLink>
       </div>
     </div>
   </div>
@@ -66,6 +71,13 @@ onMounted(fetchPerformanceSketch);
 </script>
 
 <style lang="scss" scoped>
+* {
+  //   box-sizing: border-box;
+  font-family: "Courier New", Courier, monospace;
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
 .body::-webkit-scrollbar {
   display: none;
 }
@@ -75,7 +87,7 @@ body {
 }
 
 .parent {
-  padding: 3rem;
+  padding: 2rem;
 
   overflow: hidden;
   position: absolute;
@@ -116,5 +128,36 @@ body {
   p {
     margin: 0;
   }
+}
+
+.button-main {
+  background-color: none;
+  border: none;
+  padding: 0;
+
+  button {
+    background-color: #f0f0f0;
+    border: none;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background-color: #e0e0e0;
+    }
+  }
+}
+
+.page-enter-active,
+.page-leave-active {
+  transition: all 0.4s;
+}
+.page-enter-from,
+.page-leave-to {
+  transform: translateX(100%);
+}
+.page-enter-to,
+.page-leave-from {
+  transform: translateX(0);
 }
 </style>
