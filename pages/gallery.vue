@@ -3,12 +3,14 @@
     <div class="gallery-container">
       <div class="gallery">
         <div v-for="image in images" :key="image.id" class="image-container">
-          <img :src="image.url.data.publicUrl" alt="Gallery Image" />
-          <div class="image-metadata">
-            <p>{{ image.performance_name }}</p>
-            <p>{{ image.name }}</p>
-            <p>{{ image.created_at }}</p>
-          </div>
+          <nuxt-link :to="`performance/${image.id}`">
+            <img :src="image.url.data.publicUrl" alt="Gallery Image" />
+            <div class="image-metadata">
+              <p>{{ image.performance_name }}</p>
+              <p>{{ image.name }}</p>
+              <p>{{ image.created_at }}</p>
+            </div>
+          </nuxt-link>
         </div>
       </div>
     </div>
@@ -34,15 +36,15 @@ const fetchImages = async (metadata) => {
     .from("sketches")
     .list("sketches/");
 
-  console.log("Files:", files);
+  // console.log("Files:", files);
   if (filesError) {
     console.error("Error fetching files:", filesError);
     return;
   }
 
-  console.log("Metadata", metadata);
+  // console.log("Metadata", metadata);
 
-  console.log("Unfiltered Files:", files);
+  // console.log("Unfiltered Files:", files);
 
   // Filter out files that match metadata.path
   const matchingFiles = [];
@@ -59,18 +61,19 @@ const fetchImages = async (metadata) => {
         created_at: meta.created_at,
         performance_name: meta.performance_name,
         performance_id: meta.id,
+        path: meta.path,
         url: supabase.storage.from("sketches").getPublicUrl(`${meta.path}`),
       });
     }
   });
 
-  console.log("Matching Files:", matchingFiles);
+  // console.log("Matching Files:", matchingFiles);
 
   matchingFiles.sort((a, b) => {
     return new Date(b.created_at) - new Date(a.created_at);
   });
 
-  console.log("Sorted Files:", matchingFiles);
+  // console.log("Sorted Files:", matchingFiles);
 
   images.value = matchingFiles;
 };

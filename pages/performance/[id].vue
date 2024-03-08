@@ -1,57 +1,58 @@
 <template>
-  <div>
-    <h1>Performance: {{ id }}</h1>
+  <div v-if="merged">
+    <h1>Performance: {{ images[0].performance_id }}</h1>
 
-    <img :src="`${sketchUrl}`" alt="Performance sketch" />
+    <img :src="images[0].url.data.publicUrl" alt="Performance sketch" />
   </div>
 </template>
 
 <script setup>
 const supabase = useSupabaseClient();
+let merged = ref(false);
+let images = ref([]);
 
 const route = useRoute();
 const id = ref(route.params.id);
-const sketchUrl = ref();
-
-const fetchPerformanceMeta = async () => {
-  try {
-    const { data, error } = await supabase
-      .from("sketchesMeta")
-      .select("*")
-      .eq("id", id.value);
-    if (error) {
-      console.error("Error fetching performance:", error.message);
-    } else {
-      console.log("Performance:", data);
-      fetchPerformanceSketch();
-    }
-  } catch (error) {
-    console.error("Error fetching performance:", error.message);
-  }
-};
 
 const fetchPerformanceSketch = async () => {
-  try {
-    const { data, error } = await supabase.storage
-      .from("sketches")
-      .getPublicUrl(`sketches/sketch(${id.value}).jpg`);
-    if (error) {
-      console.error("Error fetching sketch:", error.message);
-    } else {
-      //   console.log("Sketch:", data);
-      sketchUrl.value = data.publicUrl; // Ensure to set the correct property name
-      //   sketch.value = data.publicUrl; // Ensure to set the correct property name
+  const { data: files, error: filesError } = await supabase.storage
+    .from("sketches")
+    .list("sketches/");
 
-      console.log("Sketch:", sketchUrl.value);
-      return sketchUrl.value;
-    }
-  } catch (error) {
-    console.error("Error fetching sketch:", error.message);
-  }
+  //   console.log("Performances:", files);
+
+  const { data: metadata, error: metadataError } = await supabase
+    .from("sketchesMeta")
+    .select("*");
+
+  //   console.log("Metadata:", metadata);
+
+  const matchingFile = files.find((file) => id.value === file.id);
+
+  //   console.log("Matching File:", matchingFile);
+
+  const matchingMeta = metadata.find((meta) => matchingFile.name === meta.name);
+
+  //   console.log("Matching Meta:", matchingMeta);
+
+  images = [];
+
+  images.push({
+    ...matchingFile,
+    created_at: matchingMeta.created_at,
+    performance_name: matchingMeta.performance_name,
+    performance_id: matchingMeta.id,
+    path: matchingMeta.path,
+    url: supabase.storage.from("sketches").getPublicUrl(`${matchingMeta.path}`),
+  });
+
+  //   console.log("Merged Data:", images);
+  merged.value = true;
+  //   console.log("Merged:", merged);
 };
 
 // Fetch images on component mount
-onMounted(fetchPerformanceMeta);
+onMounted(fetchPerformanceSketch);
 </script>
 
 <style lang="scss" scoped>

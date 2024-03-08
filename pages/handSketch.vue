@@ -287,11 +287,11 @@ async function uploadSketch(sketchname, blob) {
     {
       name: sketchname,
       path: `sketches/${sketchname}`,
-      publicUrl: data.publicURL,
     },
   ]);
 
-  console.log(sketchname, error);
+  console.log("Meta Uploaded of sketch:", meta);
+  // console.log(sketchname, error);
 }
 
 onMounted(async () => {
