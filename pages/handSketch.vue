@@ -42,7 +42,7 @@ let leftHandThumbX = ref(0);
 let leftHandThumbY = ref(0);
 let leftHandThumbZ = ref(0);
 
-let backgroundColor = "#000";
+let backgroundColor = "#ffffff";
 
 let rX = ref(0);
 let rY = ref(0);
@@ -220,14 +220,14 @@ const setupSketch = () => {
 
       // If previousRightX and previousRightY are not null, draw a line from the previous position to the current position for the right hand
       if (s.previousRightX !== null && s.previousRightY !== null) {
-        s.pg.stroke(0, 255, 0);
+        s.pg.stroke("#FF5D00");
         s.pg.line(s.rX, s.rY, s.previousRightX, s.previousRightY);
         // s.pg.circle(s.rX, s.rY, 5);
       }
 
       // If previousLeftX and previousLeftY are not null, draw a line from the previous position to the current position for the left hand
       if (s.previousLeftX !== null && s.previousLeftY !== null) {
-        s.pg.stroke(255, 0, 255);
+        s.pg.stroke("#0000B4");
         s.pg.line(s.lX, s.lY, s.previousLeftX, s.previousLeftY);
         // s.pg.circle(s.lX, s.lY, 5);
       }
@@ -291,7 +291,6 @@ async function uploadSketch(sketchname, blob) {
   ]);
 
   console.log("Meta Uploaded of sketch:", meta);
-  // console.log(sketchname, error);
 }
 
 onMounted(async () => {
@@ -321,7 +320,7 @@ onMounted(async () => {
   z-index: 2;
   width: 1em;
   height: 1em;
-  background-color: red;
+  background-color: #0000b4;
   border-radius: 50%;
   z-index: 3;
 }
@@ -331,7 +330,7 @@ onMounted(async () => {
   z-index: 2;
   width: 1em;
   height: 1em;
-  background-color: rgb(0, 255, 38);
+  background-color: #ff5d00;
   border-radius: 50%;
   z-index: 3;
 }

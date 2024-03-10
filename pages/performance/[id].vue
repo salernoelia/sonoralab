@@ -14,7 +14,7 @@
         <p class="performance-date">Created: {{ images[0].updated_at }}</p>
 
         <NuxtLink class="button-main" to="/gallery">
-          <button>< Back to Gallery</button>
+          <button>Back to Gallery</button>
         </NuxtLink>
       </div>
     </div>
@@ -73,7 +73,9 @@ onMounted(fetchPerformanceSketch);
 <style lang="scss" scoped>
 * {
   //   box-sizing: border-box;
-  font-family: "Courier New", Courier, monospace;
+  // font-family: "Courier New", Courier, monospace;
+  font-family: "Hanken Grotesk", sans-serif;
+
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
 }
@@ -136,14 +138,15 @@ body {
   padding: 0;
 
   button {
-    background-color: #f0f0f0;
+    background-color: #242424;
+    color: #ffffff;
     border: none;
     padding: 0.5rem 1rem;
     cursor: pointer;
     transition: all 0.3s ease;
 
     &:hover {
-      background-color: #e0e0e0;
+      background-color: #3f3f3f;
     }
   }
 }

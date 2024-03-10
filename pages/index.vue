@@ -1,7 +1,7 @@
 <template>
   <div class="parent">
     <div class="dashboard">
-      <h1>Settings</h1>
+      <h1>Sonora Lab</h1>
       <NuxtLink to="/gallery">
         <button class="button-main">Gallery</button>
       </NuxtLink>
@@ -41,7 +41,9 @@ socket.onmessage = function (event) {
 
 <style scoped>
 * {
-  font-family: "Courier New", Courier, monospace;
+  font-family: "Hanken Grotesk", sans-serif;
+
+  /* font-family: "Courier New", Courier, monospace; */
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
 }

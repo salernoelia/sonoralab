@@ -87,11 +87,11 @@ const fetchImages = async (metadata) => {
     }
   });
 
-  // console.log("Matching Files:", matchingFiles);
+  matchingFiles.sort((a, b) => {
+    return new Date(b.performance_id) - new Date(a.performance_id);
+  });
 
-  // matchingFiles.sort((a, b) => {
-  //   return new Date(a.created_at) - new Date(b.created_at);
-  // });
+  // console.log("Matching Files:", matchingFiles);
 
   // console.log("Sorted Files:", matchingFiles);
 
@@ -106,7 +106,9 @@ onUnmounted(() => clearInterval(timer));
 <style lang="scss" scoped>
 * {
   // box-sizing: border-box;
-  font-family: "Courier New", Courier, monospace;
+  // font-family: "Courier New", Courier, monospace;
+  font-family: "Hanken Grotesk", sans-serif;
+
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
 }
