@@ -40,6 +40,12 @@ socket.onmessage = function (event) {
 </script>
 
 <style scoped>
+* {
+  font-family: "Courier New", Courier, monospace;
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
 .button-main {
   background-color: #ffffff;
   border: none;
