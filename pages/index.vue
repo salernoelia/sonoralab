@@ -15,24 +15,12 @@
           (Deprecated) Hand Recognition Sketch
         </button>
       </NuxtLink>
-      <button class="button-main">
-        <a
-          target="_blank"
-          style="color: black; font-style: normal; text-decoration: none"
-          href="http://127.0.0.1:5050/p5.html"
-        >
-          Sketch
-        </a>
-      </button>
-      <button class="button-main">
-        <a
-          target="_blank"
-          style="color: black; font-style: normal; text-decoration: none"
-          href="http://127.0.0.1:5050/hands.html"
-        >
-          Hand Recognition
-        </a>
-      </button>
+      <NuxtLink to="/p5.html" target="_blank">
+        <button class="button-main">P5 Sketch</button>
+      </NuxtLink>
+      <NuxtLink to="/hands.html" target="_blank">
+        <button class="button-main">Hand Recognition</button>
+      </NuxtLink>
     </div>
     <div class="console-container">
       <div class="console">
