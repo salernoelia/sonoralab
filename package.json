@@ -2,21 +2,26 @@
   "name": "nuxt-app",
   "private": true,
   "type": "module",
+  "main": "dist-electron/main.js",
   "scripts": {
     "build": "nuxt build",
+    "dev:electron": "nuxt dev -m electron",
+    "build:electron": "electron-builder --mac",
     "dev": "nuxt dev",
     "host": "nuxt dev -- --host",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare",
-    "start": "nuxt start",
-    "ionic:build": "npm run build",
-    "ionic:serve": "npm run start"
+    "postinstall": "nuxt prepare"
   },
   "devDependencies": {
     "@nuxt/devtools": "latest",
+    "electron": "^28.2.6",
+    "electron-builder": "^24.13.3",
     "nuxt": "^3.8.2",
+    "nuxt-electron": "^0.7.0",
     "sass": "^1.71.1",
+    "vite-plugin-electron": "^0.28.2",
+    "vite-plugin-electron-renderer": "^0.14.5",
     "vue": "^3.4.21",
     "vue-router": "^4.2.5"
   },
@@ -30,6 +35,7 @@
     "express": "^4.18.3",
     "fs": "^0.0.1-security",
     "http-server": "^14.1.1",
+    "live-server": "^1.2.2",
     "node-osc": "^9.1.0",
     "osc": "^2.4.4",
     "p5": "^1.9.1",

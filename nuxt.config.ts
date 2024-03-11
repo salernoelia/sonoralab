@@ -5,7 +5,7 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   ssr: false,
 
-  modules: ["@pinia/nuxt"],
+  modules: ["@pinia/nuxt", "nuxt-electron"],
 
   runtimeConfig: {
     url: process.env.SUPABASE_URL,
@@ -14,5 +14,13 @@ export default defineNuxtConfig({
 
   app: {
     pageTransition: { name: "page", mode: "out-in" },
+  },
+
+  electron: {
+    build: [
+      {
+        entry: "dist-electron/main.js",
+      },
+    ],
   },
 });
