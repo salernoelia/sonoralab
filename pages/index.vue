@@ -1,7 +1,9 @@
 <template>
   <div class="parent">
+    <!-- <h1>Sonora Lab</h1> -->
+    <img src="assets/logo/sonora-lab-black.svg" style="width: 200px;" alt="Sonora Lab">
     <div class="dashboard">
-      <h1>Sonora Lab</h1>
+      
       <NuxtLink to="/gallery">
         <button class="button-main">Gallery</button>
       </NuxtLink>
@@ -25,9 +27,12 @@
         </a>
       </button>
     </div>
-    <div class="console">
-      <p>Hand Data:</p>
-      <p>{{ handData }}</p>
+    <div class="console-container">
+      <div class="console">
+        <h3>Console <br></h3>
+      <p> {{ handData }}</p>
+      </div>
+   
     </div>
   </div>
 </template>
@@ -90,14 +95,23 @@ socket.onmessage = function (event) {
   text-align: center;
 }
 
-.console {
+.console-container {
   bottom: 0;
-  left: 0;
-  width: 200px;
-  height: 220px;
-  background-color: #ffffff;
-  border: 1px dashed #000000;
-  overflow-y: scroll;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 20px;
+  position: absolute;
   padding: 20px;
+  background-color: #ffffff;
+  border: 1px solid #000000;
+  border-radius: 20px 20px 0 0;
+  width: 90%;
+  height: 200px;
+
+}
+
+.console {
+  width: 100%;
 }
 </style>
