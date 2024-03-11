@@ -6,14 +6,22 @@
         <button class="button-main">Gallery</button>
       </NuxtLink>
       <NuxtLink to="/handSketch">
-        <button class="button-main">Hand Recognition Sketch</button>
+        <button class="button-main">(Deprecated) Hand Recognition Sketch</button>
       </NuxtLink>
       <button class="button-main">
         <a
           style="color: black; font-style: normal; text-decoration: none"
-          href="http://127.0.0.1:8080/"
+          href="http://127.0.0.1:8080/p5.html"
         >
-          Sound Visualization
+          Sketch
+        </a>
+      </button>
+      <button class="button-main">
+        <a
+          style="color: black; font-style: normal; text-decoration: none"
+          href="http://127.0.0.1:8080/hands.html"
+        >
+          Hand Recognition
         </a>
       </button>
     </div>
