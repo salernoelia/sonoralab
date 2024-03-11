@@ -2,7 +2,7 @@ import { exec } from "child_process";
 import path from "path";
 
 // Trigger the Python application
-exec(`http-server ./js/`, (error, stdout, stderr) => {
+exec(`live-server --port=5050 --no-browser  ./js/`, (error, stdout, stderr) => {
   if (error) {
     console.error(`Error starting P5 Server: ${error}`);
     return;

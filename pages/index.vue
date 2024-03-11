@@ -11,7 +11,7 @@
       <button class="button-main">
         <a
           style="color: black; font-style: normal; text-decoration: none"
-          href="http://127.0.0.1:8080/p5.html"
+          href="http://127.0.0.1:5050/p5.html"
         >
           Sketch
         </a>
@@ -19,7 +19,7 @@
       <button class="button-main">
         <a
           style="color: black; font-style: normal; text-decoration: none"
-          href="http://127.0.0.1:8080/hands.html"
+          href="http://127.0.0.1:5050/hands.html"
         >
           Hand Recognition
         </a>

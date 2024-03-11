@@ -32,28 +32,49 @@
         console.log("Connected to WebSocket server");
       };
 
-      ws.onmessage = (event) => {
+      ws.onmessage = async function (event) {
         const parsedData = JSON.parse(event.data);
-        handData.value = parsedData;
-        console.log(handData.value);
-
-        if (handData.value.hand == "left-index") {
-          leftHandIndexX.value = handData.value.x;
-          leftHandIndexY.value = handData.value.y;
-          leftHandIndexZ.value = handData.value.z;
-        } else if (handData.value.hand == "right-index") {
-          rightHandIndexX.value = handData.value.x;
-          rightHandIndexY.value = handData.value.y;
-          rightHandIndexZ.value = handData.value.z;
-        } else if (handData.value.hand == "left-thumb") {
-          leftHandThumbX.value = handData.value.x;
-          leftHandThumbY.value = handData.value.y;
-          leftHandThumbZ.value = handData.value.z;
-        } else if (handData.value.hand == "right-thumb") {
-          rightHandThumbX.value = handData.value.x;
-          rightHandThumbY.value = handData.value.y;
-          rightHandThumbZ.value = handData.value.z;
+        console.log(parsedData); // Check the received data structure
+      
+        const hand = parsedData.hand;
+        const indexX = parsedData[`${hand}-index`].x;
+        const indexY = parsedData[`${hand}-index`].y;
+        const indexZ = parsedData[`${hand}-index`].z;
+        const thumbX = parsedData[`${hand}-thumb`].x;
+        const thumbY = parsedData[`${hand}-thumb`].y;
+        const thumbZ = parsedData[`${hand}-thumb`].z;
+      
+        // Update your UI or do whatever you need with the data here
+        if (hand === "right") {
+          leftHandIndexX.value = indexX;
+          leftHandIndexY.value = indexY;
+          leftHandIndexZ.value = indexZ;
+          leftHandThumbX.value = thumbX;
+          leftHandThumbY.value = thumbY;
+          leftHandThumbZ.value = thumbZ;
+        } else if (hand === "left") {
+          rightHandIndexX.value = indexX;
+          rightHandIndexY.value = indexY;
+          rightHandIndexZ.value = indexZ;
+          rightHandThumbX.value = thumbX;
+          rightHandThumbY.value = thumbY;
+          rightHandThumbZ.value = thumbZ;
         }
+      
+        return (
+          leftHandIndexX.value,
+          leftHandIndexY.value,
+          leftHandIndexZ.value,
+          rightHandIndexX.value,
+          rightHandIndexY.value,
+          rightHandIndexZ.value,
+          leftHandThumbX.value,
+          leftHandThumbY.value,
+          leftHandThumbZ.value,
+          rightHandThumbX.value,
+          rightHandThumbY.value,
+          rightHandThumbZ.value
+        );
       };
 
       ws.onerror = (error) => {
