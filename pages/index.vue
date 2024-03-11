@@ -1,17 +1,23 @@
 <template>
   <div class="parent">
     <!-- <h1>Sonora Lab</h1> -->
-    <img src="assets/logo/sonora-lab-black.svg" style="width: 200px;" alt="Sonora Lab">
+    <img
+      src="assets/logo/sonora-lab-black.svg"
+      style="width: 200px"
+      alt="Sonora Lab"
+    />
     <div class="dashboard">
-      
-      <NuxtLink to="/gallery">
+      <NuxtLink to="/gallery" target="_blank">
         <button class="button-main">Gallery</button>
       </NuxtLink>
-      <NuxtLink to="/handSketch">
-        <button class="button-main">(Deprecated) Hand Recognition Sketch</button>
+      <NuxtLink to="/handSketch" target="_blank">
+        <button class="button-main">
+          (Deprecated) Hand Recognition Sketch
+        </button>
       </NuxtLink>
       <button class="button-main">
         <a
+          target="_blank"
           style="color: black; font-style: normal; text-decoration: none"
           href="http://127.0.0.1:5050/p5.html"
         >
@@ -20,6 +26,7 @@
       </button>
       <button class="button-main">
         <a
+          target="_blank"
           style="color: black; font-style: normal; text-decoration: none"
           href="http://127.0.0.1:5050/hands.html"
         >
@@ -29,10 +36,9 @@
     </div>
     <div class="console-container">
       <div class="console">
-        <h3>Console <br></h3>
-      <p> {{ handData }}</p>
+        <h3>Console <br /></h3>
+        <p>{{ handData }}</p>
       </div>
-   
     </div>
   </div>
 </template>
@@ -108,7 +114,6 @@ socket.onmessage = function (event) {
   border-radius: 20px 20px 0 0;
   width: 90%;
   height: 200px;
-
 }
 
 .console {
