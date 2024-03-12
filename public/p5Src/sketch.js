@@ -200,24 +200,6 @@ function setup() {
 
   pxL = null;
   pyL = null;
-
-  //    save = async () => {
-  //      await pg.save("sketch.png");
-  //      pg.background(backgroundColor);
-  //      background(backgroundColor);
-  //    };
-
-  //    toggleFullscreen = () => {
-  //      const fs = !fullscreen();
-  //      fullscreen(fs);
-  //      pg.background(backgroundColor);
-  //      background(backgroundColor);
-  //    };
-
-  //    clearSketch = () => {
-  //      pg.background(backgroundColor);
-  //      background(backgroundColor);
-  //    };
 }
 
 function draw() {
@@ -317,6 +299,5 @@ function generateMelody() {
 
 const saveAction = async () => {
   await save("sketch.png");
-  console.log("Saved");
   saveSketch();
 };
