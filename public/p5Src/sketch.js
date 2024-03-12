@@ -126,6 +126,7 @@ const cello = new Tone.Sampler(
 
 let generateButton;
 let playButton;
+let saveButton;
 
 let root = 48;
 let scale = [
@@ -177,13 +178,46 @@ function setup() {
   playButton = createButton("play");
   playButton.position(60, 10);
   playButton.mousePressed(playMelody);
+
+  saveButton = createButton("save");
+  saveButton.position(100, 10);
+  saveButton.mousePressed(saveAction);
+
   // spawnParticles()
+
+  toggleFullscreen = () => {
+    const fs = !fullscreen();
+    fullscreen(fs);
+    background(backgroundColor);
+  };
+
+  clearSketch = () => {
+    background(backgroundColor);
+  };
 
   pxR = null;
   pyR = null;
 
   pxL = null;
   pyL = null;
+
+  //    save = async () => {
+  //      await pg.save("sketch.png");
+  //      pg.background(backgroundColor);
+  //      background(backgroundColor);
+  //    };
+
+  //    toggleFullscreen = () => {
+  //      const fs = !fullscreen();
+  //      fullscreen(fs);
+  //      pg.background(backgroundColor);
+  //      background(backgroundColor);
+  //    };
+
+  //    clearSketch = () => {
+  //      pg.background(backgroundColor);
+  //      background(backgroundColor);
+  //    };
 }
 
 function draw() {
@@ -280,3 +314,9 @@ function generateMelody() {
     melody.push(note);
   }
 }
+
+const saveAction = async () => {
+  await save("sketch.png");
+  console.log("Saved");
+  saveSketch();
+};
