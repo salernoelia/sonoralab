@@ -37,8 +37,6 @@ export default defineEventHandler((event) => {
 
     if (sortedFileNames && sortedFileNames.length > 0) {
       const firstFile = sortedFileNames[0];
-      // const readFile = readFile;
-      // const fullPath = fullFilePath;
       const byteCharacters = atob(base64);
       const byteNumbers = new Array(byteCharacters.length);
       for (let i = 0; i < byteCharacters.length; i++) {

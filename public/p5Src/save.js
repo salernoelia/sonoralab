@@ -1,5 +1,5 @@
+// API call to save the sketch to Supabase
 const saveSketch = async () => {
-  //   await save();
   setTimeout(async () => {
     try {
       const response = await fetch("../../api/fetchLocalSketch");

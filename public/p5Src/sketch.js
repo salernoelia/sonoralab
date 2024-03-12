@@ -163,6 +163,8 @@ const color = "blue";
 const max_force = 5;
 const min_force = 0;
 
+let backgroundColor = "#000000";
+
 function preload() {
   selectedScale = 0;
 }
@@ -179,21 +181,16 @@ function setup() {
   playButton.position(60, 10);
   playButton.mousePressed(playMelody);
 
+  // activates the sketch saving process
   saveButton = createButton("save");
   saveButton.position(100, 10);
   saveButton.mousePressed(saveAction);
 
+  fullScreenButton = createButton("fullscreen");
+  fullScreenButton.position(140, 10);
+  fullScreenButton.mousePressed(toggleFullscreen);
+
   // spawnParticles()
-
-  toggleFullscreen = () => {
-    const fs = !fullscreen();
-    fullscreen(fs);
-    background(backgroundColor);
-  };
-
-  clearSketch = () => {
-    background(backgroundColor);
-  };
 
   pxR = null;
   pyR = null;
@@ -242,6 +239,32 @@ function draw() {
 
   pxL = xL;
   pyL = yL;
+
+  // calculate the distance of two x and y points
+  function calculateDistance(x1, y1, x2, y2) {
+    return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+  }
+
+  if (
+    // Check if right hand is pinched
+    (rightHandIndexX.value &&
+      calculateDistance(
+        rightHandIndexX.value,
+        rightHandIndexY.value,
+        rightHandThumbX.value,
+        rightHandThumbY.value
+      ) <= 0.05) ||
+    // Check if left hand is pinched
+    (leftHandIndexX.value &&
+      calculateDistance(
+        leftHandIndexX.value,
+        leftHandIndexY.value,
+        leftHandThumbX.value,
+        leftHandThumbY.value
+      ) <= 0.05)
+  ) {
+    console.log("Pinch detected");
+  }
 }
 
 function thisScale() {
@@ -297,7 +320,23 @@ function generateMelody() {
   }
 }
 
+// Saves sketch locally and executes the API call to save the sketch to Supabase
 const saveAction = async () => {
   await save("sketch.png");
   saveSketch();
 };
+
+const toggleFullscreen = () => {
+  const fs = !fullscreen();
+  fullscreen(fs);
+  background(backgroundColor);
+};
+
+const clearSketch = () => {
+  background(backgroundColor);
+};
+
+function windowResized() {
+  resizeCanvas(windowWidth, windowHeight);
+  background(backgroundColor);
+}
