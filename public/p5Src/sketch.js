@@ -112,21 +112,32 @@ let lowpass = new Tone.Filter({
 }).connect(filter);
 
 const monoSynth = new Tone.Sampler({
-  G1: "./samples/contrabass/G1.ogg",
+  G1: "../samples/contrabass/G1.ogg",
 }).connect(lowpass);
 monoSynth.volume.value = -5;
 
 const cello = new Tone.Sampler(
   {
-    A2: "./samples/cello/A2.ogg",
-    A3: "./samples/cello/A3.ogg",
+    A2: "../samples/cello/A2.ogg",
+    A3: "../samples/cello/A3.ogg",
   },
   { portamento: 0 }
 ).connect(lowpassCello);
 
+//---Recorder
+const actx = Tone.context;
+const dest = actx.createMediaStreamDestination();
+const recorder = new MediaRecorder(dest.stream);
+synth.connect(dest);
+monoSynth.connect(dest);
+cello.connect(dest);
+
+const chunks = [];
+
 let generateButton;
 let playButton;
 let saveButton;
+let replayButton;
 
 let root = 48;
 let scale = [
@@ -189,6 +200,14 @@ function setup() {
   fullScreenButton = createButton("fullscreen");
   fullScreenButton.position(140, 10);
   fullScreenButton.mousePressed(toggleFullscreen);
+
+  clearButton = createButton("clear");
+  clearButton.position(210, 10);
+  clearButton.mousePressed(clearSketch);
+
+  replayButton = createButton("replay");
+  replayButton.position(250, 10);
+  replayButton.mousePressed(replayTrack);
 
   // spawnParticles()
 
@@ -284,11 +303,16 @@ function setTimeSig(ts) {
 // Start & Stop isch e chli am inneschisse
 function playMelody() {
   if (Tone.Transport.state == "started") {
+    recorder.stop();
+    console.log("Stopped Recording:", chunks);
+
     background("black");
     Tone.Transport.stop();
     Tone.Transport.cancel();
     playButton.html("play");
   } else {
+    recorder.start();
+    console.log("Recording");
     Tone.Transport.cancel();
     background("black");
     Tone.Transport.scheduleRepeat(setMelody, "4n");
@@ -340,3 +364,21 @@ function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
   background(backgroundColor);
 }
+
+recorder.ondataavailable = (evt) => chunks.push(evt.data);
+
+recorder.onstop = async (evt) => {
+  let blob = new Blob(chunks, { type: "audio/ogg" });
+
+  await fetch("api/uploadAudio", {
+    method: "POST",
+    body: blob,
+  });
+};
+
+const replayTrack = async () => {
+  let blob = new Blob(chunks, { type: "audio/ogg; codecs=opus" });
+  const url = URL.createObjectURL(blob);
+  const audio = new Audio(url);
+  audio.play();
+};

@@ -7,7 +7,7 @@ wss.on("connection", function connection(ws) {
   ws.on("error", console.error);
 
   ws.on("message", function message(data) {
-    console.log("Backend received: %s", data);
+    // console.log("Backend received: %s", data);
 
     try {
       // Parse the incoming data as JSON
@@ -16,7 +16,7 @@ wss.on("connection", function connection(ws) {
       // Send the parsed data to all connected clients
       wss.clients.forEach((client) => {
         client.send(JSON.stringify(parsedData));
-        console.log("Message sent to client", parsedData);
+        // console.log("Message sent to client", parsedData);
       });
     } catch (error) {
       console.error("Error parsing JSON:", error);
