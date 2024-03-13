@@ -24,7 +24,7 @@
     </div>
     <div class="console-container">
       <div class="console">
-        <h3>Console <br /></h3>
+        <p>Incoming Data: <br /></p>
         <p>{{ handData }}</p>
       </div>
     </div>
@@ -101,7 +101,7 @@ socket.onmessage = function (event) {
   border: 1px solid #000000;
   border-radius: 20px 20px 0 0;
   width: 90%;
-  height: 200px;
+  height: 50px;
 }
 
 .console {

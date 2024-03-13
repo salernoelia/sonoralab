@@ -129,7 +129,12 @@ const actx = Tone.context;
 const dest = actx.createMediaStreamDestination();
 const recorder = new MediaRecorder(dest.stream);
 synth.connect(dest);
+
+lowpass.connect(dest);
 monoSynth.connect(dest);
+bandpass.connect(dest);
+
+
 cello.connect(dest);
 
 //Audio Stuff
@@ -377,7 +382,7 @@ const saveAction = async () => {
     catch (error){
       console.error("Error uploading sketch:", error);
     }
-  }, 1000);
+  }, 1500);
 
   setTimeout(async () => {
     try {
@@ -386,5 +391,5 @@ const saveAction = async () => {
     } catch (error) {
       console.error("Error uploading audio:", error);
     }
-  }, 1000);
+  }, 1500);
 };
