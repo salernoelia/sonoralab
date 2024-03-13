@@ -13,7 +13,7 @@ const saveSketch = async () => {
 };
 
 const saveAudio = async () => {
-  let blob = new Blob(chunks, { type: "audio/wav" });
+  let blob = new Blob(chunks, { type: "audio/ogg" });
   chunks = [];
 
   // Create a blob URL
@@ -22,7 +22,7 @@ const saveAudio = async () => {
   // Create a download link and set its href to the blob URL
   let a = document.createElement("a");
   a.href = url;
-  a.download = "audio.wav"; // Set the file name
+  a.download = "audio.ogg"; // Set the file name
 
   // Append the link to the body
   document.body.appendChild(a);

@@ -12,7 +12,7 @@
           <source
             class="play-icon"
             :src="images[0].trackURL.data.publicUrl"
-            type="audio/wav"
+            type="audio/ogg"
           />
         </audio>
         <h1 class="performance-title">
@@ -60,7 +60,7 @@ const fetchPerformanceSketch = async () => {
   console.log("Tracks:", tracks);
 
   const matchingFileWithoutExtension = matchingFile.name.split(".")[0];
-  const matchingFileWithWaveExtension = `${matchingFileWithoutExtension}.wav`;
+  const matchingFileWithWaveExtension = `${matchingFileWithoutExtension}.ogg`;
   console.log("w/ ext:", matchingFileWithWaveExtension);
 
   const matchingTrack = tracks.find(

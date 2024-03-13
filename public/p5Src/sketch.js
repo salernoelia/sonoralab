@@ -301,9 +301,8 @@ function setTimeSig(ts) {
 // Start & Stop isch e chli am inneschisse
 function playMelody() {
   if (Tone.Transport.state == "started") {
-    saveAction();
-
     recorder.stop();
+    saveAction();
 
     console.log("Stopped Recording:", chunks);
 
@@ -364,7 +363,9 @@ recorder.ondataavailable = (evt) => chunks.push(evt.data);
 
 // Saves sketch locally and executes the API call to save the sketch to Supabase
 const saveAction = async () => {
-  await save("sketch.png");
-  await saveSketch();
-  await saveAudio();
+  setTimeout(async () => {
+    await save("sketch.png");
+    await saveSketch();
+    await saveAudio();
+  }, 300);
 };

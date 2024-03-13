@@ -19,8 +19,8 @@ export default defineEventHandler((event) => {
     // Filter out files with a "." in the beginning
     files = files.filter((file) => !file.startsWith("."));
 
-    // Filter out files that are not .wav files
-    let filteredFiles = files.filter((file) => file.endsWith(".wav"));
+    // Filter out files that are not .ogg files
+    let filteredFiles = files.filter((file) => file.endsWith(".ogg"));
 
     let filteredSketches = files.filter((file) => file.endsWith(".png"));
 
@@ -63,7 +63,7 @@ export default defineEventHandler((event) => {
       trackname = `${firstSketch.name.substring(
         0,
         firstSketch.name.lastIndexOf(".")
-      )}.wav`;
+      )}.ogg`;
 
       const byteCharacters = atob(base64);
       const byteNumbers = new Array(byteCharacters.length);
@@ -71,7 +71,7 @@ export default defineEventHandler((event) => {
         byteNumbers[i] = byteCharacters.charCodeAt(i);
       }
       const byteArray = new Uint8Array(byteNumbers);
-      const blob = new Blob([byteArray], { type: "audio/wav" });
+      const blob = new Blob([byteArray], { type: "audio/ogg" });
       uploadSketch(trackname, blob);
     } else {
       console.error("No files found in sketchList");
