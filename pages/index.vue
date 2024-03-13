@@ -24,7 +24,7 @@
     </div>
     <div class="console-container">
       <div class="console">
-        <p>Incoming Data: <br /></p>
+        <p>Incoming <Datal></Datal>: <br /></p>
         <p>{{ handData }}</p>
       </div>
     </div>

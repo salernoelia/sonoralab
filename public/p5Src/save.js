@@ -1,7 +1,33 @@
 
+//---------------------------------Save Sketch and Audio---------------------------------
 
+// Checks if the recorder stopped and saves the audio to the chunks array
+recorder.ondataavailable = (evt) => chunks.push(evt.data);
 
+// Saves sketch locally and executes the API call to save the sketch to Supabase
+const saveAction = async () => {
+  console.log("Saving sketch and audio...");
+  await save("sketch.png");
 
+  setTimeout(async () => {
+    try{
+    await saveSketch();
+    console.log("Sketch is uploaded to Supabase");
+    }
+    catch (error){
+      console.error("Error uploading sketch:", error);
+    }
+  }, 1500);
+
+  setTimeout(async () => {
+    try {
+      await saveAudio();
+      console.log("Audio is uploaded to Supabase");
+    } catch (error) {
+      console.error("Error uploading audio:", error);
+    }
+  }, 1500);
+};
 
 
 // API call to save the sketch to Supabase

@@ -12,6 +12,8 @@ let rightHandThumbX = { value: 0 };
 let rightHandThumbY = { value: 0 };
 let rightHandThumbZ = { value: 0 };
 
+// ---WebSocket---
+
 const ws = new WebSocket("ws://localhost:8081");
 
 ws.onopen = () => {
@@ -70,74 +72,9 @@ ws.onerror = (error) => {
 ws.onclose = () => {
   console.log("WebSocket connection closed");
 };
-Tone.Master.volume.value = -10;
-
-// // ---Bandpass
-let bandpass = new Tone.Filter({
-  type: "bandpass",
-  frequency: 300,
-  Q: 1,
-}).toMaster();
-
-//---Base Synth
-let synth = new Tone.DuoSynth({
-  envelope: {
-    attack: 0.01,
-    decay: 0.1,
-    sustain: 0.6,
-    release: 1,
-  },
-}).connect(bandpass);
-
-synth.volume.value = -20;
-
-let lowpassCello = new Tone.Filter({
-  type: "lowpass",
-  frequency: 150,
-  Q: 1,
-}).toMaster();
-
-//--Piano Filters
-const filter = new Tone.AutoFilter({
-  frequency: 5,
-  depth: 0.9,
-})
-  .toMaster()
-  .start();
-
-let lowpass = new Tone.Filter({
-  type: "lowpass",
-  frequency: 150,
-  Q: 1,
-}).connect(filter);
-
-const monoSynth = new Tone.Sampler({
-  G1: "../samples/contrabass/G1.ogg",
-}).connect(lowpass);
-monoSynth.volume.value = -5;
-
-const cello = new Tone.Sampler(
-  {
-    A2: "../samples/cello/A2.ogg",
-    A3: "../samples/cello/A3.ogg",
-  },
-  { portamento: 0 }
-).connect(lowpassCello);
-
-//---Recorder
-const actx = Tone.context;
-const dest = actx.createMediaStreamDestination();
-const recorder = new MediaRecorder(dest.stream);
-synth.connect(dest);
-
-lowpass.connect(dest);
-monoSynth.connect(dest);
-bandpass.connect(dest);
 
 
-cello.connect(dest);
-
-//Audio Stuff
+// Recording buffers
 let chunks = [];
 let blob;
 
@@ -363,33 +300,3 @@ function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
   background(backgroundColor);
 }
-
-//---------------------------------Save Sketch and Audio---------------------------------
-
-// Checks if the recorder stopped and saves the audio to the chunks array
-recorder.ondataavailable = (evt) => chunks.push(evt.data);
-
-// Saves sketch locally and executes the API call to save the sketch to Supabase
-const saveAction = async () => {
-  console.log("Saving sketch and audio...");
-  await save("sketch.png");
-
-  setTimeout(async () => {
-    try{
-    await saveSketch();
-    console.log("Sketch is uploaded to Supabase");
-    }
-    catch (error){
-      console.error("Error uploading sketch:", error);
-    }
-  }, 1500);
-
-  setTimeout(async () => {
-    try {
-      await saveAudio();
-      console.log("Audio is uploaded to Supabase");
-    } catch (error) {
-      console.error("Error uploading audio:", error);
-    }
-  }, 1500);
-};
