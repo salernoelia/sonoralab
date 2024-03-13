@@ -16,6 +16,7 @@ export default defineEventHandler((event) => {
 
     // Filter out files with a "." in the beginning
     files = files.filter((file) => !file.startsWith("."));
+    files = files.filter((file) => file.endsWith(".png"));
 
     // Sort files by their last modification time in ascending order
     const sortedFiles = files
