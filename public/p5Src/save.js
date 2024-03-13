@@ -1,3 +1,9 @@
+
+
+
+
+
+
 // API call to save the sketch to Supabase
 const saveSketch = async () => {
   setTimeout(async () => {
@@ -7,7 +13,7 @@ const saveSketch = async () => {
         console.log("Sketch is saved to supabase");
       }
     } catch (error) {
-      console.error("Error uploading files:", error);
+      console.error("Error uploading sketch:", error);
     }
   }, 50);
 };
@@ -32,6 +38,11 @@ const saveAudio = async () => {
   setTimeout(async () => {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    await fetch("/api/uploadAudio");
   }, 100);
+  try {
+    await fetch("/api/uploadAudio");
+    console.log("Audio is saved to supabase");
+  } catch (error) {
+    console.error("Error uploading audio:", error);
+  }
 };

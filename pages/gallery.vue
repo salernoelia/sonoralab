@@ -14,7 +14,7 @@
           <div class="info-container_bottom">
             <p class="description">A Project by:</p>
             <p class="description.bold">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit.
+              Alison Léger, Stepan Vedunov, Arno Thöni, Elia Salerno
             </p>
           </div>
         </div>
@@ -55,17 +55,10 @@ const fetchImages = async (metadata) => {
     .from("sketches")
     .list("sketches/");
 
-  // console.log("Files:", files);
   if (filesError) {
     console.error("Error fetching files:", filesError);
     return;
   }
-
-  // console.log("Metadata", metadata);
-
-  // console.log("Unfiltered Files:", files);
-
-  // Filter out files that match metadata.path
   const matchingFiles = [];
 
   // Iterate over each metadata object
@@ -83,17 +76,12 @@ const fetchImages = async (metadata) => {
         path: meta.path,
         url: supabase.storage.from("sketches").getPublicUrl(`${meta.path}`),
       });
-      // console.log("Matching File:", matchingFile.created_at);
     }
   });
 
   matchingFiles.sort((a, b) => {
     return new Date(b.performance_id) - new Date(a.performance_id);
   });
-
-  // console.log("Matching Files:", matchingFiles);
-
-  // console.log("Sorted Files:", matchingFiles);
 
   images.value = matchingFiles;
 };
@@ -130,13 +118,9 @@ body:-webkit-scrollbar {
 
 .gallery-container {
   display: flex;
-
   position: absolute;
   inset: 0;
   padding: 2rem;
-
-  // overflow-y: hidden; /* Hide vertical scrollbar */
-  // overflow-x: hidden; /* Hide horizontal scrollbar */
 }
 
 .gallery {
@@ -145,13 +129,20 @@ body:-webkit-scrollbar {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 300px));
   gap: 1rem;
-  justify-content: center;
+  justify-content: flex-end;
   overflow-y: scroll;
 }
 
 .image-container {
   padding-top: 100%; /* Create a quadratic container */
   position: relative;
+  transition: all 0.4s;
+
+  &:hover {
+    //dropshadow
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.3),
+      0 6px 20px 0 rgba(0, 0, 0, 0.3);
+  }
 }
 
 .image-container img {
