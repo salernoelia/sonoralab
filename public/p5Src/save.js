@@ -11,3 +11,27 @@ const saveSketch = async () => {
     }
   }, 50);
 };
+
+const saveAudio = async () => {
+  let blob = new Blob(chunks, { type: "audio/wav" });
+  chunks = [];
+
+  // Create a blob URL
+  let url = URL.createObjectURL(blob);
+
+  // Create a download link and set its href to the blob URL
+  let a = document.createElement("a");
+  a.href = url;
+  a.download = "audio.wav"; // Set the file name
+
+  // Append the link to the body
+  document.body.appendChild(a);
+
+  // Programmatically click the link to start the download
+  a.click();
+  setTimeout(async () => {
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    await fetch("/api/uploadAudio");
+  }, 100);
+};

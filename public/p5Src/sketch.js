@@ -132,7 +132,9 @@ synth.connect(dest);
 monoSynth.connect(dest);
 cello.connect(dest);
 
+//Audio Stuff
 let chunks = [];
+let blob;
 
 let generateButton;
 let playButton;
@@ -204,10 +206,6 @@ function setup() {
   clearButton = createButton("clear");
   clearButton.position(210, 10);
   clearButton.mousePressed(clearSketch);
-
-  replayButton = createButton("replay");
-  replayButton.position(250, 10);
-  replayButton.mousePressed(replayTrack);
 
   // spawnParticles()
 
@@ -303,7 +301,10 @@ function setTimeSig(ts) {
 // Start & Stop isch e chli am inneschisse
 function playMelody() {
   if (Tone.Transport.state == "started") {
+    saveAction();
+
     recorder.stop();
+
     console.log("Stopped Recording:", chunks);
 
     background("black");
@@ -344,12 +345,6 @@ function generateMelody() {
   }
 }
 
-// Saves sketch locally and executes the API call to save the sketch to Supabase
-const saveAction = async () => {
-  await save("sketch.png");
-  saveSketch();
-};
-
 const toggleFullscreen = () => {
   const fs = !fullscreen();
   fullscreen(fs);
@@ -367,38 +362,9 @@ function windowResized() {
 
 recorder.ondataavailable = (evt) => chunks.push(evt.data);
 
-let blob;
-recorder.onstop = async (evt) => {
-  let blob = new Blob(chunks, { type: "audio/wav" });
-  chunks = [];
-
-  // Create a blob URL
-  let url = URL.createObjectURL(blob);
-
-  // Create a download link and set its href to the blob URL
-  let a = document.createElement("a");
-  a.href = url;
-  a.download = "audio.wav"; // Set the file name
-
-  // Append the link to the body
-  document.body.appendChild(a);
-
-  // Programmatically click the link to start the download
-  a.click();
-
-  // await fetch("/api/uploadAudio");
-
-  // Clean up: remove the link after the download starts
-  setTimeout(async () => {
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    await fetch("/api/uploadAudio");
-  }, 100);
-};
-
-const replayTrack = async () => {
-  let blob = new Blob(chunks, { type: "audio/ogg; codecs=opus" });
-  const url = URL.createObjectURL(blob);
-  const audio = new Audio(url);
-  audio.play();
+// Saves sketch locally and executes the API call to save the sketch to Supabase
+const saveAction = async () => {
+  await save("sketch.png");
+  await saveSketch();
+  await saveAudio();
 };
