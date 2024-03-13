@@ -8,8 +8,12 @@
       />
 
       <div class="performance-info" v-if="merged">
-        <audio controls>
-          <source :src="images[0].trackURL.data.publicUrl" type="audio/wav" />
+        <audio class="audio-player-container" controls autoplay>
+          <source
+            class="play-icon"
+            :src="images[0].trackURL.data.publicUrl"
+            type="audio/wav"
+          />
         </audio>
         <h1 class="performance-title">
           Performance {{ images[0].performance_id }}
