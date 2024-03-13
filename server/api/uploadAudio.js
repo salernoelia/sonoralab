@@ -1,8 +1,8 @@
-import { createClient } from "@supabase/supabase-js";
 import fs from "fs";
 import path from "path";
+import { createClient } from "@supabase/supabase-js";
 
-export default defineEventHandler(async (event) => {
+export default defineEventHandler((event) => {
   const supabaseUrl = "https://bphzkvnzvljywziisyeq.supabase.co";
   const supabaseKey =
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJwaHprdm56dmxqeXd6aWlzeWVxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDkxNTkyNDEsImV4cCI6MjAyNDczNTI0MX0.8d9oCoN6TwPo8SD5e-Jpohmf09zQ0G0v35fHPcvKEq0";
@@ -10,14 +10,7 @@ export default defineEventHandler(async (event) => {
 
   const downloadsFolderPath = "./sketches/";
 
-  const eventBody = await readBody(event);
-  const base64 = eventBody.toString("base64");
-  const buffer = Buffer.from(base64);
-  const arrayBuffer = Uint8Array.from(buffer).buffer;
-  const blob = new Blob([arrayBuffer], { type: "audio/ogg" });
-
-  console.log("Array Buffer", arrayBuffer);
-  console.log("Blob", blob);
+  let trackname;
 
   try {
     // Read the contents of the Downloads folder
@@ -26,8 +19,13 @@ export default defineEventHandler(async (event) => {
     // Filter out files with a "." in the beginning
     files = files.filter((file) => !file.startsWith("."));
 
+    // Filter out files that are not .wav files
+    let filteredFiles = files.filter((file) => file.endsWith(".wav"));
+
+    let filteredSketches = files.filter((file) => file.endsWith(".png"));
+
     // Sort files by their last modification time in ascending order
-    const sortedFiles = files
+    const sortedFiles = filteredFiles
       .map((file) => {
         const filePath = path.join(downloadsFolderPath, file);
         const stats = fs.statSync(filePath);
@@ -38,43 +36,62 @@ export default defineEventHandler(async (event) => {
       })
       .sort((b, a) => a.modifiedTime - b.modifiedTime);
 
+    console.log("Sorted Files:", sortedFiles);
+
+    const sortedSketches = filteredSketches
+      .map((file) => {
+        const filePath = path.join(downloadsFolderPath, file);
+        const stats = fs.statSync(filePath);
+        return {
+          name: file,
+          modifiedTime: stats.mtime.getTime(),
+        };
+      })
+      .sort((b, a) => a.modifiedTime - b.modifiedTime);
+
+    console.log("Sorted Sketches:", sortedSketches);
+
     // Extract just the names of the sorted files
     const sortedFileNames = sortedFiles.map((file) => file.name);
+    const fullFilePath = downloadsFolderPath + sortedFileNames[0];
+    const readFile = fs.readFileSync(fullFilePath);
+    let base64 = readFile.toString("base64");
 
-    const firstFile = sortedFileNames[0];
-    const trackname = `${firstFile.substring(
-      0,
-      firstFile.lastIndexOf(".")
-    )}.wav`;
+    if (sortedFileNames && sortedFileNames.length > 0) {
+      const firstFile = sortedFileNames[0];
+      const firstSketch = sortedSketches[0];
+      trackname = `${firstSketch.name.substring(
+        0,
+        firstSketch.name.lastIndexOf(".")
+      )}.wav`;
 
-    if (blob != undefined) {
-      uploadAudio(blob);
-
-      async function uploadAudio(blob) {
-        const { data, error } = await supabase.storage
-          .from("sketches")
-          .upload(`tracks/${trackname}`, blob, {
-            contentType: "audio/ogg; codecs=opus",
-          });
-        if (error) {
-          console.error(error);
-        } else {
-          console.log("Track uploaded successfully");
-        }
+      const byteCharacters = atob(base64);
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
       }
-      return {
-        statusCode: 200,
-        body: "Track uploaded successfully",
-        blob: blob,
-      };
+      const byteArray = new Uint8Array(byteNumbers);
+      const blob = new Blob([byteArray], { type: "audio/wav" });
+      uploadSketch(trackname, blob);
     } else {
-      return {
-        statusCode: 500,
-        body: "Blob is undefined",
-        trackname: trackname,
-      };
+      console.error("No files found in sketchList");
     }
+
+    async function uploadSketch(trackname, blob) {
+      const { data, error } = await supabase.storage
+        .from("sketches")
+        .upload(`tracks/${trackname}`, blob);
+    }
+    return {
+      success: true,
+      trackname: trackname,
+      firstFile: sortedFileNames[0],
+      firstSketch: sortedSketches[0],
+    };
   } catch (error) {
-    console.error(error);
+    // If there's an error reading the folder, return the error message
+    return {
+      error: error.message,
+    };
   }
 });

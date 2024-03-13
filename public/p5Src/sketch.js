@@ -132,7 +132,7 @@ synth.connect(dest);
 monoSynth.connect(dest);
 cello.connect(dest);
 
-const chunks = [];
+let chunks = [];
 
 let generateButton;
 let playButton;
@@ -367,13 +367,32 @@ function windowResized() {
 
 recorder.ondataavailable = (evt) => chunks.push(evt.data);
 
+let blob;
 recorder.onstop = async (evt) => {
-  let blob = new Blob(chunks, { type: "audio/ogg" });
+  let blob = new Blob(chunks, { type: "audio/wav" });
+  chunks = [];
 
-  await fetch("api/uploadAudio", {
-    method: "POST",
-    body: blob,
-  });
+  // Create a blob URL
+  let url = URL.createObjectURL(blob);
+
+  // Create a download link and set its href to the blob URL
+  let a = document.createElement("a");
+  a.href = url;
+  a.download = "tracks/audio.wav"; // Set the file name
+
+  // Append the link to the body
+  document.body.appendChild(a);
+
+  // Programmatically click the link to start the download
+  a.click();
+
+  // await fetch("/api/uploadAudio");
+
+  // Clean up: remove the link after the download starts
+  setTimeout(() => {
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }, 100);
 };
 
 const replayTrack = async () => {
