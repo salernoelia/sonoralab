@@ -7,7 +7,10 @@
         alt="Performance sketch"
       />
 
-      <div class="performance-info">
+      <div class="performance-info" v-if="merged">
+        <audio controls>
+          <source :src="images[0].trackURL.data.publicUrl" type="audio/wav" />
+        </audio>
         <h1 class="performance-title">
           Performance {{ images[0].performance_id }}
         </h1>
@@ -44,11 +47,25 @@ const fetchPerformanceSketch = async () => {
 
   const matchingFile = files.find((file) => id.value === file.id);
 
-  //   console.log("Matching File:", matchingFile);
-
   const matchingMeta = metadata.find((meta) => matchingFile.name === meta.name);
 
-  //   console.log("Matching Meta:", matchingMeta);
+  const { data: tracks, error: tracksError } = await supabase.storage
+    .from("sketches")
+    .list("tracks/");
+
+  console.log("Tracks:", tracks);
+
+  const matchingFileWithoutExtension = matchingFile.name.split(".")[0];
+  const matchingFileWithWaveExtension = `${matchingFileWithoutExtension}.wav`;
+  console.log("w/ ext:", matchingFileWithWaveExtension);
+
+  const matchingTrack = tracks.find(
+    (track) => matchingFileWithWaveExtension === track.name
+  );
+
+  const matchingTrackName = matchingTrack.name;
+
+  console.log("Matching trackkk:", matchingTrack);
 
   images = [];
 
@@ -59,7 +76,11 @@ const fetchPerformanceSketch = async () => {
     performance_id: matchingMeta.id,
     path: matchingMeta.path,
     url: supabase.storage.from("sketches").getPublicUrl(`${matchingMeta.path}`),
+    trackURL: supabase.storage
+      .from("sketches/tracks/")
+      .getPublicUrl(`${matchingTrackName}`),
   });
+  console.log("trackURL", images[0].trackURL.data.publicUrl);
 
   //   console.log("Merged Data:", images);
   merged.value = true;

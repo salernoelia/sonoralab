@@ -378,7 +378,7 @@ recorder.onstop = async (evt) => {
   // Create a download link and set its href to the blob URL
   let a = document.createElement("a");
   a.href = url;
-  a.download = "tracks/audio.wav"; // Set the file name
+  a.download = "audio.wav"; // Set the file name
 
   // Append the link to the body
   document.body.appendChild(a);
@@ -389,9 +389,10 @@ recorder.onstop = async (evt) => {
   // await fetch("/api/uploadAudio");
 
   // Clean up: remove the link after the download starts
-  setTimeout(() => {
+  setTimeout(async () => {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+    await fetch("/api/uploadAudio");
   }, 100);
 };
 
