@@ -33,6 +33,7 @@ export default defineEventHandler((event) => {
     const sortedFileNames = sortedFiles.map((file) => file.name);
     const fullFilePath = downloadsFolderPath + sortedFileNames[0];
     const readFile = fs.readFileSync(fullFilePath);
+    console.log("Read file", readFile);
     let base64 = readFile.toString("base64");
 
     if (sortedFileNames && sortedFileNames.length > 0) {

@@ -1,4 +1,4 @@
-const { createClient } = require("@supabase/supabase-js");
+import { createClient } from "@supabase/supabase-js";
 import fs from "fs";
 import path from "path";
 
@@ -11,7 +11,8 @@ export default defineEventHandler(async (event) => {
   const downloadsFolderPath = "./sketches/";
 
   const eventBody = await readBody(event);
-  const buffer = Buffer.from(eventBody);
+  const base64 = eventBody.toString("base64");
+  const buffer = Buffer.from(base64);
   const arrayBuffer = Uint8Array.from(buffer).buffer;
   const blob = new Blob([arrayBuffer], { type: "audio/ogg" });
 
