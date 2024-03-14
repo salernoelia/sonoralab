@@ -1,4 +1,3 @@
-
 //---------------------------------Save Sketch and Audio---------------------------------
 
 // Checks if the recorder stopped and saves the audio to the chunks array
@@ -10,11 +9,10 @@ const saveAction = async () => {
   await save("sketch.png");
 
   setTimeout(async () => {
-    try{
-    await saveSketch();
-    console.log("Sketch is uploaded to Supabase");
-    }
-    catch (error){
+    try {
+      await saveSketch();
+      console.log("Sketch is uploaded to Supabase");
+    } catch (error) {
       console.error("Error uploading sketch:", error);
     }
   }, 3000);
@@ -28,7 +26,6 @@ const saveAction = async () => {
     }
   }, 3000);
 };
-
 
 // API call to save the sketch to Supabase
 const saveSketch = async () => {
@@ -68,6 +65,7 @@ const saveAudio = async () => {
   try {
     await fetch("/api/uploadAudio");
     console.log("Audio is saved to supabase");
+    mode = 6;
   } catch (error) {
     console.error("Error uploading audio:", error);
   }

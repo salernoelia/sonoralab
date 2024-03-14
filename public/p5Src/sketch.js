@@ -13,16 +13,17 @@ let rightHandThumbY = { value: 0 };
 let rightHandThumbZ = { value: 0 };
 let handData = { value: {} };
 
-let hand 
-let indexX
-let indexY
-let indexZ
-let thumbX
-let thumbY
-let thumbZ
+let hand;
+let indexX;
+let indexY;
+let indexZ;
+let thumbX;
+let thumbY;
+let thumbZ;
 
 let startTime;
-let timerHasStarted = false;
+let resetTimer = false;
+let elapsedTime;
 
 let sceneMap = new Map();
 
@@ -30,7 +31,7 @@ let sceneMap = new Map();
 let sceneNames = ["scene1", "scene2", "scene3", "scene4", "scene5"];
 
 // Initialize the map with all scenes set to false
-sceneNames.forEach(sceneName => {
+sceneNames.forEach((sceneName) => {
   sceneMap.set(sceneName, false);
 });
 
@@ -48,39 +49,35 @@ ws.onmessage = async function (event) {
   if (parsedData.hand === "none") {
     handsVisible.value = false;
     // console.log("No hands detected");
-
   } else {
-  handsVisible.value = true;
-   hand = parsedData.hand;
-   indexX = parsedData[`${hand}-index`].x;
-   indexY = parsedData[`${hand}-index`].y;
-   indexZ = parsedData[`${hand}-index`].z;
-   thumbX = parsedData[`${hand}-thumb`].x;
-   thumbY = parsedData[`${hand}-thumb`].y;
-   thumbZ = parsedData[`${hand}-thumb`].z;
+    handsVisible.value = true;
+    hand = parsedData.hand;
+    indexX = parsedData[`${hand}-index`].x;
+    indexY = parsedData[`${hand}-index`].y;
+    indexZ = parsedData[`${hand}-index`].z;
+    thumbX = parsedData[`${hand}-thumb`].x;
+    thumbY = parsedData[`${hand}-thumb`].y;
+    thumbZ = parsedData[`${hand}-thumb`].z;
 
-  // Update your UI or do whatever you need with the data here
-  if (hand === "right") {
-    leftHandIndexX.value = indexX;
-    leftHandIndexY.value = indexY;
-    leftHandIndexZ.value = indexZ;
-    leftHandThumbX.value = thumbX;
-    leftHandThumbY.value = thumbY;
-    leftHandThumbZ.value = thumbZ;
-    // handsVisible.value = true;
-
-  } else if (hand === "left") {
-    rightHandIndexX.value = indexX;
-    rightHandIndexY.value = indexY;
-    rightHandIndexZ.value = indexZ;
-    rightHandThumbX.value = thumbX;
-    rightHandThumbY.value = thumbY;
-    rightHandThumbZ.value = thumbZ;
-    // handsVisible.value = true;	
-
+    // Update your UI or do whatever you need with the data here
+    if (hand === "right") {
+      leftHandIndexX.value = indexX;
+      leftHandIndexY.value = indexY;
+      leftHandIndexZ.value = indexZ;
+      leftHandThumbX.value = thumbX;
+      leftHandThumbY.value = thumbY;
+      leftHandThumbZ.value = thumbZ;
+      // handsVisible.value = true;
+    } else if (hand === "left") {
+      rightHandIndexX.value = indexX;
+      rightHandIndexY.value = indexY;
+      rightHandIndexZ.value = indexZ;
+      rightHandThumbX.value = thumbX;
+      rightHandThumbY.value = thumbY;
+      rightHandThumbZ.value = thumbZ;
+      // handsVisible.value = true;
+    }
   }
-}
-
 
   return (
     leftHandIndexX.value,
@@ -96,7 +93,6 @@ ws.onmessage = async function (event) {
     rightHandThumbY.value,
     rightHandThumbZ.value,
     handsVisible.value
-    
   );
 };
 
@@ -123,10 +119,10 @@ let chunks = [];
 let blob;
 let recorderStarted = false;
 
-let generateButton;
-let playButton;
-let saveButton;
-let replayButton;
+// let generateButton;
+// let playButton;
+// let saveButton;
+// let replayButton;
 
 let root = 48;
 let scale = [
@@ -147,7 +143,6 @@ let prevY;
 let n;
 let note;
 let mode = 1;
-
 
 let pt = [];
 let x = 8;
@@ -179,17 +174,15 @@ let timer1, timer2, timer3, timer4;
 let transition = false;
 
 let timer; // Timer variable
-let conditionMetTime = 0; 
+let conditionMetTime = 0;
 
 let backgroundColor = "#000000";
 
-
-
 function preload() {
   selectedScale = 0;
-  img1 = loadImage('../images/01.png');
-  img2 = loadImage('../images/02.png');
-  img3 = loadImage('../images/03.png');
+  img1 = loadImage("../images/01.png");
+  img2 = loadImage("../images/02.png");
+  img3 = loadImage("../images/03.png");
 }
 
 function setup() {
@@ -199,26 +192,26 @@ function setup() {
   setTimeSig(8);
 
   // Deprecated Buttons
-  generateButton = createButton("random");
-  generateButton.position(0, 10);
-  generateButton.mousePressed(generateMelody);
+  // generateButton = createButton("random");
+  // generateButton.position(0, 10);
+  // generateButton.mousePressed(generateMelody);
 
-  playButton = createButton("play");
-  playButton.position(60, 10);
-  playButton.mousePressed(playMelody);
+  // playButton = createButton("play");
+  // playButton.position(60, 10);
+  // playButton.mousePressed(playMelody);
 
-  // activates the sketch saving process
-  saveButton = createButton("save");
-  saveButton.position(100, 10);
-  saveButton.mousePressed(saveAction);
+  // // activates the sketch saving process
+  // saveButton = createButton("save");
+  // saveButton.position(100, 10);
+  // saveButton.mousePressed(saveAction);
 
-  fullScreenButton = createButton("fullscreen");
-  fullScreenButton.position(140, 10);
-  fullScreenButton.mousePressed(toggleFullscreen);
+  // fullScreenButton = createButton("fullscreen");
+  // fullScreenButton.position(140, 10);
+  // fullScreenButton.mousePressed(toggleFullscreen);
 
-  clearButton = createButton("clear");
-  clearButton.position(210, 10);
-  clearButton.mousePressed(clearSketch);
+  // clearButton = createButton("clear");
+  // clearButton.position(210, 10);
+  // clearButton.mousePressed(clearSketch);
 }
 
 function stopAudio() {
@@ -232,223 +225,213 @@ function clearCanvas() {
   background(0);
 }
 
-function draw() {      
-  stateMachine()
+function draw() {
+  stateMachine();
 
   switch (mode) {
     case 1:
       scene1();
-      console.log("scene1")
+      console.log("scene1");
       break;
     case 2:
       scene2();
-      console.log("scene2")
+      console.log("scene2");
       break;
     case 3: //in between
-      scene3();   
-      console.log("scene3")
+      scene3();
+      console.log("scene3");
       break;
     case 4:
       scene4();
-      console.log("scene4")  
+      console.log("scene4");
       break;
     case 5:
-      scene5();   
-      console.log("scene5")
+      scene5();
+      console.log("scene5");
       break;
     case 6: //in between
-      scene6();   
-      console.log("scene6")
+      if (
+        mode === 6 &&
+        sceneMap.get("scene1") === true &&
+        sceneMap.get("scene2") === true &&
+        sceneMap.get("scene3") === true &&
+        sceneMap.get("scene4") === true &&
+        sceneMap.get("scene5") === true
+      ) {
+        console.log("scene6");
+        console.log("Going back to scene1");
+        mode = 1;
+
+        scene1();
+      }
       break;
     default:
       stopAudio(); // Stop audio playback
       clearCanvas(); // Clear the canvas
-      mode = 1; // Set mode to 1 to transition to scene 1
+
       break;
   }
 
-  if(mode != 4 && mode != 3){
+  if (mode != 4 && mode != 3) {
     drawCursors();
   }
 }
 
-
-
-
-function drawCursors(){
+function drawCursors() {
   xR = map(rightHandIndexX.value, 1, 0, 0, window.innerWidth);
   yR = map(rightHandIndexY.value, 0, 1, 0, window.innerHeight);
 
   xL = map(leftHandIndexX.value, 1, 0, 0, window.innerWidth);
   yL = map(leftHandIndexY.value, 0, 1, 0, window.innerHeight);
 
-  fill('#FF5D00')
-  ellipse(xR, yR, 20)
+  fill("#FF5D00");
+  ellipse(xR, yR, 20);
 
-  fill('#0000B4')
-  ellipse(xL, yL, 20)
+  fill("#0000B4");
+  ellipse(xL, yL, 20);
 }
 
 function checkConditions() {
+  calculateDistance();
+  console.log("Checking conditions");
 
-  
-  calculateDistance()
-
-  if (
-    handsVisible.value === true
-  ) {
-    
   // Check if conditions are met
   if (
-    ((rightHandIndexX.value &&
-      rightHandIndexY.value &&
-      rightHandThumbX.value &&
-      rightHandThumbY.value) ||
-      (leftHandIndexX.value &&
-      leftHandIndexY.value &&
-      leftHandThumbX.value &&
-      leftHandThumbY.value)) &&
-    (
-      // Check for right hand
-      (rightHandIndexX.value &&
-        calculateDistance(
-          rightHandIndexX.value,
-          rightHandIndexY.value,
-          rightHandThumbX.value,
-          rightHandThumbY.value
-        ) <= 0.05) ||
-      // Check for left hand
-      (leftHandIndexX.value &&
-        calculateDistance(
-          leftHandIndexX.value,
-          leftHandIndexY.value,
-          leftHandThumbX.value,
-          leftHandThumbY.value
-        ) <= 0.05)
-    )
+    // Check for right hand
+    (handsVisible.value === true &&
+      rightHandIndexX.value &&
+      calculateDistance(
+        rightHandIndexX.value,
+        rightHandIndexY.value,
+        rightHandThumbX.value,
+        rightHandThumbY.value
+      ) <= 0.05) ||
+    // Check for left hand
+    (handsVisible.value === true &&
+      leftHandIndexX.value &&
+      calculateDistance(
+        leftHandIndexX.value,
+        leftHandIndexY.value,
+        leftHandThumbX.value,
+        leftHandThumbY.value
+      ) <= 0.05)
   ) {
+    console.log("Pinched");
     if (millis() - conditionMetTime >= 5000) {
       return true;
     }
   } else {
     conditionMetTime = millis();
   }
-} else {
-  conditionMetTime = millis();
-}
 
   return false;
 }
 
+function calculateDistance(x1, y1, x2, y2) {
+  return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+}
 
+function stateMachine() {
+  xR = map(rightHandIndexX.value, 1, 0, 0, window.innerWidth);
+  yR = map(rightHandIndexY.value, 0, 1, 0, window.innerHeight);
 
-  function calculateDistance(x1, y1, x2, y2) {
-    return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+  xRt = map(rightHandThumbX.value, 1, 0, 0, window.innerWidth);
+  yRt = map(rightHandThumbY.value, 0, 1, 0, window.innerHeight);
+
+  xL = map(leftHandIndexX.value, 1, 0, 0, window.innerWidth);
+  yL = map(leftHandIndexY.value, 0, 1, 0, window.innerHeight);
+
+  xLt = map(leftHandThumbX.value, 1, 0, 0, window.innerWidth);
+  yLt = map(leftHandThumbY.value, 0, 1, 0, window.innerHeight);
+
+  if (mode === 1 && sceneMap.get("scene1") === false) {
+    if ((xR && yR) || (xL && yL)) {
+      sceneMap.set("scene1", true);
+
+      timer1 = setTimeout(function () {
+        mode = 2;
+        timer1 = millis();
+      }, 3000);
+    }
   }
-  
-  function stateMachine() {
-    xR = map(rightHandIndexX.value, 1, 0, 0, window.innerWidth);
-    yR = map(rightHandIndexY.value, 0, 1, 0, window.innerHeight);
-
-    xRt = map(rightHandThumbX.value, 1, 0, 0, window.innerWidth);
-    yRt = map(rightHandThumbY.value, 0, 1, 0, window.innerHeight);
-
-    xL = map(leftHandIndexX.value, 1, 0, 0, window.innerWidth);
-    yL = map(leftHandIndexY.value, 0, 1, 0, window.innerHeight);
-
-    xLt = map(leftHandThumbX.value, 1, 0, 0, window.innerWidth);
-    yLt = map(leftHandThumbY.value, 0, 1, 0, window.innerHeight);
-
-    if(mode === 1 && sceneMap.get("scene1") === false){
-      if(xR && yR || xL && yL) {
-        sceneMap.set("scene1", true);
-
-        timer1 = setTimeout(function() { 
-          mode = 2;
-
-          console.log("mode", mode, "IS scene 1 accomplished", sceneMap.get("scene1"))
-
-        }, 2000);
-        }    
-      }
-    if(mode === 2 && sceneMap.get("scene1") === true){
-        
-      if(xR && yR || xL && yL ){
-
-        if (timerHasStarted === false) {
-        startTimer()
-        timerHasStarted = true;
-      }
-        
-        
-        if (millis() - startTime > 15000) {
-          mode = 1;
-        } else if (checkConditions()) {
-          sceneMap.set("scene2", true);
-
-          mode = 3;
-          timerHasStarted = false;
-          startTime = 0;
-
-        }
-      }
-    } 
-    if(mode === 3 && sceneMap.get("scene1") === true && sceneMap.get("scene2") === true){
-      timer1 = setTimeout(function(){ 
-            Tone.Transport.start();
-            Tone.Transport.scheduleRepeat(setMelody, "4n");
-            if (recorderStarted === false) {
-              recorder.start();
-              console.log("Recording");
-            recorderStarted = true;
-            sceneMap.set("scene3", true);
-
-            mode = 4;
-
-
-
-            }
-      }, 30);
+  if (
+    mode === 2 &&
+    handsVisible.value === true &&
+    sceneMap.get("scene1") === true &&
+    sceneMap.get("scene2") === false &&
+    sceneMap.get("scene3") === false &&
+    sceneMap.get("scene4") === false &&
+    sceneMap.get("scene5") === false
+  ) {
+    if (resetTimer === false) {
+      startTimer();
+      resetTimer = true;
     }
-    if(mode === 4 && sceneMap.get("scene1") === true && sceneMap.get("scene2") === true && sceneMap.get("scene3") === true){
-      timer1 = setTimeout(function(){ 
-        sceneMap.set("scene4", true);
-
-            mode = 5;
-      }, 15000);
-    }
-    if(mode === 5 && sceneMap.get("scene1") === true && sceneMap.get("scene2") === true && sceneMap.get("scene3") === true && sceneMap.get("scene4") === true){
-      if (recorderStarted === true) {
+  }
+  if (
+    mode === 3 &&
+    sceneMap.get("scene1") === true &&
+    sceneMap.get("scene2") === true &&
+    sceneMap.get("scene3") === false &&
+    sceneMap.get("scene4") === false &&
+    sceneMap.get("scene5") === false
+  ) {
+  }
+  if (
+    mode === 4 &&
+    sceneMap.get("scene1") === true &&
+    sceneMap.get("scene2") === true &&
+    sceneMap.get("scene3") === true &&
+    sceneMap.get("scene4") === false &&
+    sceneMap.get("scene5") === false
+  ) {
+  }
+  if (
+    mode === 5 &&
+    sceneMap.get("scene1") === true &&
+    sceneMap.get("scene2") === true &&
+    sceneMap.get("scene3") === true &&
+    sceneMap.get("scene4") === true &&
+    sceneMap.get("scene5") === false
+  ) {
+    if (recorderStarted === true && sceneMap.get("scene5") === false) {
       recorder.stop();
       console.log("Stopped Recording:", chunks);
       saveAction();
       recorderStarted = false;
+    }
+    timer1 = millis();
+
+    timer1 = setTimeout(function () {
+      if (sceneMap.get("scene5") === false) {
+        sceneMap.set("scene5", true);
+        Tone.Transport.stop();
+        Tone.Transport.cancel();
       }
 
-      timer1 = setTimeout(function(){ 
-        sceneMap.set("scene5", true);
-        
-            mode = 6;
-            Tone.Transport.stop();
-            Tone.Transport.cancel();
-           
-          }, 5000);
-          
-    }
-    if(mode === 6 && sceneMap.get("scene1") === true && sceneMap.get("scene2") === true && sceneMap.get("scene3") === true && sceneMap.get("scene4") === true && sceneMap.get("scene5") === true){
-      sceneNames.forEach(sceneName => {
-        sceneMap.set(sceneName, false);
-      });
-      mode = 1;
+      sceneMap.set("scene5", true);
+      mode = 6;
+    }, 5000);
+  }
+  if (mode === 6) {
+    console.log("scene6 has been reached");
 
-
-  } 
+    sceneMap.set("scene1", false);
+    sceneMap.set("scene2", false);
+    sceneMap.set("scene3", false);
+    sceneMap.set("scene4", false);
+    sceneMap.set("scene5", false);
+    console.log(
+      sceneMap.get("scene1"),
+      sceneMap.get("scene2"),
+      sceneMap.get("scene3"),
+      sceneMap.get("scene4"),
+      sceneMap.get("scene5")
+    );
+    mode = 1;
+  }
   return;
-
 }
-
-
-
 
 function thisScale() {
   selectedScale = selectScale.value();
@@ -472,31 +455,27 @@ function setMelody() {
   instrumentL.triggerAttackRelease("E3");
 }
 
-
-
-
 // Start & Stop isch e chli am inneschisse
-function playMelody() {
-  if (Tone.Transport.state == "started") {
-    recorder.stop();
-    saveAction();
+// function playMelody() {
+//   if (Tone.Transport.state == "started") {
+//     recorder.stop();
+//     saveAction();
 
-
-    console.log("Stopped Recording:", chunks);
-    background("black");
-    Tone.Transport.stop();
-    Tone.Transport.cancel();
-    playButton.html("play");
-  } else {
-    recorder.start();
-    console.log("Recording");
-    Tone.Transport.cancel();
-    background("black");
-    Tone.Transport.scheduleRepeat(setMelody, "4n");
-    Tone.Transport.start();
-    playButton.html("stop");
-  }
-} 
+//     console.log("Stopped Recording:", chunks);
+//     background("black");
+//     Tone.Transport.stop();
+//     Tone.Transport.cancel();
+//     playButton.html("play");
+//   } else {
+//     recorder.start();
+//     console.log("Recording");
+//     Tone.Transport.cancel();
+//     background("black");
+//     Tone.Transport.scheduleRepeat(setMelody, "4n");
+//     Tone.Transport.start();
+//     playButton.html("stop");
+//   }
+// }
 
 function setMelody() {
   beat = Tone.Transport.position.split(":")[1];
@@ -536,6 +515,5 @@ function windowResized() {
 }
 
 function startTimer() {
-  console.log("Timer started");
   startTime = millis();
 }
