@@ -1,4 +1,4 @@
-Tone.Master.volume.value = -10;
+Tone.Master.volume.value = -20;
 
 // ---Bandpass filter
 let bandpass = new Tone.Filter({
@@ -69,7 +69,9 @@ const instrumentL = new Tone.Sampler({
 const actx = Tone.context;
 const dest = actx.createMediaStreamDestination();
 const recorder = new MediaRecorder(dest.stream);
-synth.connect(dest)
-bandpass.connect(dest);
-instrumentR.connect(dest);
-instrumentL.connect(dest);
+
+// bandpass.connect(dest);
+// filterL.connect(dest);
+// filterR.connect(dest);
+
+Tone.Master.connect(dest);

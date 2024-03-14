@@ -247,6 +247,18 @@ function drawCursors(){
 
 function checkConditions() {
   calculateDistance()
+
+  if (
+    (rightHandIndexX.value &&
+      rightHandIndexY.value &&
+      rightHandThumbX.value &&
+      rightHandThumbY.value) ||
+    (leftHandIndexX.value &&
+      leftHandIndexY.value &&
+      leftHandThumbX.value &&
+      leftHandThumbY.value)
+  ) {
+
   // Check if conditions are met
   if (
     ((rightHandIndexX.value &&
@@ -282,6 +294,8 @@ function checkConditions() {
   } else {
     conditionMetTime = millis();
   }
+}
+
   return false;
 }
 
