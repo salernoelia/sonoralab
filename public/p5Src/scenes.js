@@ -66,6 +66,8 @@ function scene1() {
         leftHandThumbX.value &&
         leftHandThumbY.value)
     ) {
+        
+          
       // Check if the index finger and thumb are pinched for either hand
       if (
         // Check for right hand
@@ -99,7 +101,8 @@ function scene1() {
           ellipse(x, y, diam);
         }
       }
-    }
+      }
+
 
     for (let x = 0; x < window.innerWidth; x += spaceX){
       for (let y = 0; y < window.innerHeight; y += spaceY){

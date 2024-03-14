@@ -279,8 +279,24 @@
     "landmark-grid-container"
   )[0];
 
+
+  let handsVisible = false;
   function onResults(results) {
-    //console.log(results)
+
+    
+    console.log(results)
+
+    if (results.multiHandLandmarks.length > 0) {
+     
+        handsVisible = true;
+       
+      
+    } else {
+      
+        handsVisible = false;
+        ws.send(JSON.stringify({hand: "none"}));
+      
+    }
     // Hide the spinner.
     document.body.classList.add("loaded");
     // Update the frame rate.
@@ -327,11 +343,18 @@
           },
         });
       }
-    }
+    } 
+    
+      
+    
+
     canvasCtx.restore();
   }
   const hands = new mpHands.Hands(config);
   hands.onResults(onResults);
+
+
+
   // Present a control panel through which the user can manipulate the solution
   // options.
   new controls.ControlPanel(controlsElement, {
