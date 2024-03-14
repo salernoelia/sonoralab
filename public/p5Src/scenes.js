@@ -2,12 +2,15 @@ function scene1() {
   image(img1, 0, 0, window.innerWidth, window.innerHeight);
   if (handsVisible.value === true) {
     sceneMap.set("scene1", true);
-
-    timer1 = setTimeout(function () {
-      console.log("Timer in Sc 1 is called", timer1);
-      mode = 2;
-      timer1 = millis();
-    }, 3000);
+    console.log("scene 1 is trying to call timer", scene1Timer);
+    if (scene1Timer === false) {
+      timer1 = setTimeout(function () {
+        console.log("Timer in Sc 1 is called", timer1);
+        mode = 2;
+        timer1 = millis();
+      }, 3000);
+      scene1Timer = true;
+    }
   }
 }
 function scene2() {
@@ -67,7 +70,7 @@ function scene4() {
       recorderStarted = false;
       console.log("Recorder Started is Deactivated (false)", recorderStarted);
     }
-  }, 15000);
+  }, 30000);
 
   calculateDistance();
   xR = map(rightHandIndexX.value, 1, 0, 0, window.innerWidth);
@@ -170,10 +173,15 @@ function scene5() {
   timer1 = millis();
 
   if (scene5Timer === false) {
+    scene1Timer = false;
+    console.log(
+      "SceneTimer1 is Deactivated (false) in timer block",
+      scene1Timer
+    );
+
     timer1 = setTimeout(function () {
       console.log(" Timer in Sc 5 is called", timer1);
       mode = 1;
-      scene5Timer = true;
       console.log("Scene 5 Timer is Deactivated (true)", scene5Timer);
     }, 5000);
     scene5Timer = true;

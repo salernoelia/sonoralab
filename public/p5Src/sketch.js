@@ -25,6 +25,8 @@ let startTime;
 let resetTimer = false;
 let elapsedTime;
 
+let scene1Timer = false;
+// let scene4Timer = false;
 let scene5Timer = false;
 
 let sceneMap = new Map();
@@ -120,11 +122,6 @@ let prevLeftHandThumbY = null;
 let chunks = [];
 let blob;
 let recorderStarted = false;
-
-// let generateButton;
-// let playButton;
-// let saveButton;
-// let replayButton;
 
 let root = 48;
 let scale = [
