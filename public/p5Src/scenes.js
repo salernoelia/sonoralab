@@ -38,6 +38,7 @@ function scene2() {
     mode = 3;
   } else if (millis() - startTime > 15000 && checkConditions() === false) {
     mode = 1;
+    startTime = 0;
   }
 }
 function scene3() {
@@ -55,11 +56,15 @@ function scene3() {
 }
 
 function scene4() {
-  timer1 = millis();
-  timer1 = setTimeout(function () {
-    if (recorderStarted === true) {
-      console.log(" Timer in Sc 4 is called", timer1);
+  if (resetTimer === false) {
+    console.log("resetTimer for startTimer in Sc 4 is called", resetTimer);
+    startTimer();
+    resetTimer = true;
+  }
 
+  if (millis() - startTime > 30000) {
+    if (recorderStarted === true) {
+      console.log("Scene 4 startTimer is called after", millis() - startTime);
       Tone.Transport.stop();
       Tone.Transport.cancel();
       recorder.stop();
@@ -67,11 +72,13 @@ function scene4() {
       saveAction();
       scene5Timer = false;
       console.log("scene 5timer set to (false)", false);
-      mode = 5;
       recorderStarted = false;
       console.log("Recorder Started is Deactivated (false)", recorderStarted);
+      mode = 5;
+      startTime = 0;
+      resetTimer = false;
     }
-  }, 10000);
+  }
 
   calculateDistance();
   xR = map(rightHandIndexX.value, 1, 0, 0, window.innerWidth);
