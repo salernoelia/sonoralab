@@ -38,7 +38,7 @@ const saveSketch = async () => {
     } catch (error) {
       console.error("Error uploading sketch:", error);
     }
-  }, 50);
+  }, 500);
 };
 
 const saveAudio = async () => {
@@ -61,7 +61,7 @@ const saveAudio = async () => {
   setTimeout(async () => {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-  }, 100);
+  }, 500);
   try {
     await fetch("/api/uploadAudio");
     console.log("Audio is saved to supabase");
