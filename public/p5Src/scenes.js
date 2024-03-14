@@ -4,6 +4,7 @@ function scene1() {
     sceneMap.set("scene1", true);
 
     timer1 = setTimeout(function () {
+      console.log("Timer in Sc 1 is called", timer1);
       mode = 2;
       timer1 = millis();
     }, 3000);
@@ -21,6 +22,8 @@ function scene2() {
   text(str, window.innerWidth / 2, window.innerHeight / 1.1);
 
   if (resetTimer === false) {
+    console.log("Reset Timer in Sc 2 is called", resetTimer);
+
     startTimer();
     resetTimer = true;
   }
@@ -52,20 +55,19 @@ function scene4() {
   timer1 = millis();
   timer1 = setTimeout(function () {
     if (recorderStarted === true) {
+      console.log(" Timer in Sc 4 is called", timer1);
+
       Tone.Transport.stop();
       Tone.Transport.cancel();
       recorder.stop();
       console.log("Stopped Recording:", chunks);
       saveAction();
+      scene5Timer = false;
+      mode = 5;
       recorderStarted = false;
+      console.log("Recorder Started is Deactivated (false)", recorderStarted);
     }
-    mode = 5;
   }, 15000);
-
-  // if (sceneMap.get("scene4") === false) {
-  //   mode = 5;
-  //   sceneMap.set("scene4", true);
-  // }
 
   calculateDistance();
   xR = map(rightHandIndexX.value, 1, 0, 0, window.innerWidth);
@@ -167,32 +169,16 @@ function scene5() {
 
   timer1 = millis();
 
-  timer1 = setTimeout(function () {
-    mode = 1;
-  }, 5000);
-
-  // if (
-  //   mode === 5 &&
-  //   sceneMap.get("scene1") === true &&
-  //   sceneMap.get("scene2") === true &&
-  //   sceneMap.get("scene3") === true &&
-  //   sceneMap.get("scene4") === true &&
-  //   sceneMap.get("scene5") === false
-  // ) {
-
-  // } else {
-  //   console.log("Bohoo, scene 5 cannot start because of", mode);
-  //   mode = 1;
-  //   startTime = millis();
-  //   console.log("Starttime from scenes", startTime);
-  // }
+  if (scene5Timer === false) {
+    timer1 = setTimeout(function () {
+      console.log(" Timer in Sc 5 is called", timer1);
+      mode = 1;
+      scene5Timer = true;
+      console.log("Scene 5 Timer is Deactivated (true)", scene5Timer);
+    }, 5000);
+    scene5Timer = true;
+  }
 }
-
-// function scene6() {
-//   background(0);
-//   mode = 1;
-
-// }
 
 function calculateDistance(x1, y1, x2, y2) {
   return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));

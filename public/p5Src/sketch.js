@@ -25,6 +25,8 @@ let startTime;
 let resetTimer = false;
 let elapsedTime;
 
+let scene5Timer = false;
+
 let sceneMap = new Map();
 
 // Array containing scene names
