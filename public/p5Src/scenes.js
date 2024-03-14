@@ -20,8 +20,6 @@ function scene2() {
   let str = elapsedTime.toFixed(1);
   text(str, window.innerWidth / 2, window.innerHeight / 1.1);
 
-  //  ellipse;
-
   if (resetTimer === false) {
     startTimer();
     resetTimer = true;
@@ -44,22 +42,30 @@ function scene3() {
     Tone.Transport.scheduleRepeat(setMelody, "4n");
     recorder.start();
     console.log("Recording");
-    recorderStarted = true;
     sceneMap.set("scene3", true);
     mode = 4;
+    recorderStarted = true;
   }
 }
 
 function scene4() {
   timer1 = millis();
-
   timer1 = setTimeout(function () {
-    if (sceneMap.get("scene4") === false) {
-      mode = 5;
-      sceneMap.set("scene4", true);
+    if (recorderStarted === true) {
+      Tone.Transport.stop();
+      Tone.Transport.cancel();
+      recorder.stop();
+      console.log("Stopped Recording:", chunks);
+      saveAction();
+      recorderStarted = false;
     }
-    timer1 = millis();
+    mode = 5;
   }, 15000);
+
+  // if (sceneMap.get("scene4") === false) {
+  //   mode = 5;
+  //   sceneMap.set("scene4", true);
+  // }
 
   calculateDistance();
   xR = map(rightHandIndexX.value, 1, 0, 0, window.innerWidth);
@@ -157,44 +163,36 @@ function scene4() {
   }
 }
 function scene5() {
-  if (recorderStarted === true && sceneMap.get("scene5") === false) {
-    recorder.stop();
-    console.log("Stopped Recording:", chunks);
-    saveAction();
-    recorderStarted = false;
-  }
+  image(img3, 0, 0, window.innerWidth, window.innerHeight);
+
   timer1 = millis();
 
   timer1 = setTimeout(function () {
-    if (sceneMap.get("scene5") === false) {
-      sceneMap.set("scene5", true);
-      Tone.Transport.stop();
-      Tone.Transport.cancel();
-    }
-
-    sceneMap.set("scene5", true);
-    mode = 6;
-  }, 5000);
-  if (
-    mode === 5 &&
-    sceneMap.get("scene1") === true &&
-    sceneMap.get("scene2") === true &&
-    sceneMap.get("scene3") === true &&
-    sceneMap.get("scene4") === true &&
-    sceneMap.get("scene5") === false
-  ) {
-    image(img3, 0, 0, window.innerWidth, window.innerHeight);
-  } else {
-    console.log("Bohoo, scene 5 cannot start because of", mode);
     mode = 1;
-    startTime = millis();
-    console.log("Starttime from scenes", startTime);
-  }
+  }, 5000);
+
+  // if (
+  //   mode === 5 &&
+  //   sceneMap.get("scene1") === true &&
+  //   sceneMap.get("scene2") === true &&
+  //   sceneMap.get("scene3") === true &&
+  //   sceneMap.get("scene4") === true &&
+  //   sceneMap.get("scene5") === false
+  // ) {
+
+  // } else {
+  //   console.log("Bohoo, scene 5 cannot start because of", mode);
+  //   mode = 1;
+  //   startTime = millis();
+  //   console.log("Starttime from scenes", startTime);
+  // }
 }
 
-function scene6() {
-  background(0);
-}
+// function scene6() {
+//   background(0);
+//   mode = 1;
+
+// }
 
 function calculateDistance(x1, y1, x2, y2) {
   return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));

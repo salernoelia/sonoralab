@@ -249,27 +249,13 @@ function draw() {
       scene5();
       console.log("scene5");
       break;
-    case 6: //in between
-      if (
-        mode === 6 &&
-        sceneMap.get("scene1") === true &&
-        sceneMap.get("scene2") === true &&
-        sceneMap.get("scene3") === true &&
-        sceneMap.get("scene4") === true &&
-        sceneMap.get("scene5") === true
-      ) {
-        console.log("scene6");
-        console.log("Going back to scene1");
-        mode = 1;
 
-        scene1();
-      }
-      break;
-    default:
-      stopAudio(); // Stop audio playback
-      clearCanvas(); // Clear the canvas
+    // default:
+    //   mode = 1;
+    //   // stopAudio(); // Stop audio playback
+    //   // clearCanvas(); // Clear the canvas
 
-      break;
+    //   break;
   }
 
   if (mode != 4 && mode != 3) {
@@ -345,93 +331,51 @@ function stateMachine() {
   yLt = map(leftHandThumbY.value, 0, 1, 0, window.innerHeight);
 
   if (mode === 1 && sceneMap.get("scene1") === false) {
-    if ((xR && yR) || (xL && yL)) {
-      sceneMap.set("scene1", true);
-
-      timer1 = setTimeout(function () {
-        mode = 2;
-        timer1 = millis();
-      }, 3000);
-    }
   }
-  if (
-    mode === 2 &&
-    handsVisible.value === true &&
-    sceneMap.get("scene1") === true &&
-    sceneMap.get("scene2") === false &&
-    sceneMap.get("scene3") === false &&
-    sceneMap.get("scene4") === false &&
-    sceneMap.get("scene5") === false
-  ) {
-    if (resetTimer === false) {
-      startTimer();
-      resetTimer = true;
-    }
-  }
-  if (
-    mode === 3 &&
-    sceneMap.get("scene1") === true &&
-    sceneMap.get("scene2") === true &&
-    sceneMap.get("scene3") === false &&
-    sceneMap.get("scene4") === false &&
-    sceneMap.get("scene5") === false
-  ) {
-  }
-  if (
-    mode === 4 &&
-    sceneMap.get("scene1") === true &&
-    sceneMap.get("scene2") === true &&
-    sceneMap.get("scene3") === true &&
-    sceneMap.get("scene4") === false &&
-    sceneMap.get("scene5") === false
-  ) {
-  }
-  if (
-    mode === 5 &&
-    sceneMap.get("scene1") === true &&
-    sceneMap.get("scene2") === true &&
-    sceneMap.get("scene3") === true &&
-    sceneMap.get("scene4") === true &&
-    sceneMap.get("scene5") === false
-  ) {
-    if (recorderStarted === true && sceneMap.get("scene5") === false) {
-      recorder.stop();
-      console.log("Stopped Recording:", chunks);
-      saveAction();
-      recorderStarted = false;
-    }
-    timer1 = millis();
-
-    timer1 = setTimeout(function () {
-      if (sceneMap.get("scene5") === false) {
-        sceneMap.set("scene5", true);
-        Tone.Transport.stop();
-        Tone.Transport.cancel();
-      }
-
-      sceneMap.set("scene5", true);
-      mode = 6;
-    }, 5000);
-  }
-  if (mode === 6) {
-    console.log("scene6 has been reached");
-
-    sceneMap.set("scene1", false);
-    sceneMap.set("scene2", false);
-    sceneMap.set("scene3", false);
-    sceneMap.set("scene4", false);
-    sceneMap.set("scene5", false);
-    console.log(
-      sceneMap.get("scene1"),
-      sceneMap.get("scene2"),
-      sceneMap.get("scene3"),
-      sceneMap.get("scene4"),
-      sceneMap.get("scene5")
-    );
-    mode = 1;
-  }
-  return;
 }
+
+// if (
+//   mode === 5 &&
+//   sceneMap.get("scene1") === true &&
+//   sceneMap.get("scene2") === true &&
+//   sceneMap.get("scene3") === true &&
+//   sceneMap.get("scene4") === true &&
+//   sceneMap.get("scene5") === false
+// ) {
+// if (recorderStarted === true && sceneMap.get("scene5") === false) {
+//   // recorder.stop();
+//   // console.log("Stopped Recording:", chunks);
+//   // saveAction();
+//   // recorderStarted = false;
+// }
+// timer1 = millis();
+// timer1 = setTimeout(function () {
+//   if (sceneMap.get("scene5") === false) {
+//     sceneMap.set("scene5", true);
+//     Tone.Transport.stop();
+//     Tone.Transport.cancel();
+//   }
+//   sceneMap.set("scene5", true);
+//   mode = 6;
+// }, 5000);
+// }
+// if (mode === 6) {
+//   console.log("scene6 has been reached");
+
+//   sceneMap.set("scene1", false);
+//   sceneMap.set("scene2", false);
+//   sceneMap.set("scene3", false);
+//   sceneMap.set("scene4", false);
+//   sceneMap.set("scene5", false);
+//   console.log(
+//     sceneMap.get("scene1"),
+//     sceneMap.get("scene2"),
+//     sceneMap.get("scene3"),
+//     sceneMap.get("scene4"),
+//     sceneMap.get("scene5")
+//   );
+//   mode = 1;
+// }
 
 function thisScale() {
   selectedScale = selectScale.value();
