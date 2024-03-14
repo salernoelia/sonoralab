@@ -37,8 +37,10 @@ function scene2() {
     timer1 = millis();
     mode = 3;
   } else if (millis() - startTime > 15000 && checkConditions() === false) {
-    mode = 1;
     startTime = 0;
+    scene1Timer = false;
+    resetTimer = false;
+    mode = 1;
   }
 }
 function scene3() {
