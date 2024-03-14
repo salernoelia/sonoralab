@@ -17,7 +17,7 @@ const saveAction = async () => {
     catch (error){
       console.error("Error uploading sketch:", error);
     }
-  }, 1500);
+  }, 3000);
 
   setTimeout(async () => {
     try {
@@ -26,7 +26,7 @@ const saveAction = async () => {
     } catch (error) {
       console.error("Error uploading audio:", error);
     }
-  }, 1500);
+  }, 3000);
 };
 
 

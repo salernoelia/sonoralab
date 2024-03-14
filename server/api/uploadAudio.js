@@ -74,6 +74,7 @@ export default defineEventHandler((event) => {
       }
       const byteArray = new Uint8Array(byteNumbers);
       const blob = new Blob([byteArray], { type: "audio/ogg" });
+      console.log("Uploading track to Supabase...", trackname, blob);
       uploadSketch(trackname, blob);
     }
     catch (error){

@@ -1,66 +1,75 @@
 Tone.Master.volume.value = -10;
 
-// // ---Bandpass
+// ---Bandpass filter
 let bandpass = new Tone.Filter({
-  type: "bandpass",
-  frequency: 300,
-  Q: 1,
-}).toMaster();
+    type: "bandpass",
+    frequency: 300,
+    Q: 1,
+  }).toMaster();
 
-//---Base Synth
-let synth = new Tone.DuoSynth({
-  envelope: {
-    attack: 0.01,
-    decay: 0.1,
-    sustain: 0.6,
-    release: 1,
-  },
-}).connect(bandpass);
 
-synth.volume.value = -20;
+  //---Base Synth
+  let synth = new Tone.DuoSynth({
+    envelope: {
+      attack: 0.01,
+      decay: 0.1,
+      sustain: 0.6,
+      release: 1,
+    },
+  }).connect(bandpass);
+  synth.volume.value = -5;
 
-let lowpassCello = new Tone.Filter({
-  type: "lowpass",
-  frequency: 150,
-  Q: 1,
-}).toMaster();
 
-//--Piano Filters
-const filter = new Tone.AutoFilter({
-  frequency: 5,
-  depth: 0.9,
-})
-  .toMaster()
-  .start();
+   //--Left hand filters
+  const filterL = new Tone.AutoFilter({
+    frequency: 5,
+    depth: 0.9,
+  })
+    .toMaster()
+    .start();
 
-let lowpass = new Tone.Filter({
-  type: "lowpass",
-  frequency: 150,
-  Q: 1,
-}).connect(filter);
+  let lowpassL = new Tone.Filter({
+    type: "lowpass",
+    frequency: 150,
+    Q: 1,
+  }).connect(filterL)
 
-const monoSynth = new Tone.Sampler({
-  G1: "../samples/contrabass/G1.ogg",
-}).connect(lowpass);
-monoSynth.volume.value = -5;
 
-const cello = new Tone.Sampler(
-  {
-    A2: "../samples/cello/A2.ogg",
-    A3: "../samples/cello/A3.ogg",
-  },
-  { portamento: 0 }
-).connect(lowpassCello);
+  //--Right hand filters
+  const filterR = new Tone.AutoFilter({
+    frequency: 5,
+    depth: 0.9,
+  })
+    .toMaster()
+    .start();
+
+  let lowpassR = new Tone.Filter({
+    type: "lowpass",
+    frequency: 150,
+    Q: 1,
+  }).connect(filterR)
+
+
+//--Right hand instrument
+  const instrumentR = new Tone.Sampler({
+    "G1": "./samples/contrabass/G1.ogg"
+    }
+).connect(lowpassR);
+instrumentR.volume.value = -5;
+
+
+//--Left hand instrument
+const instrumentL = new Tone.Sampler({
+    "A2": "./samples/cello/A2.ogg",
+    }, {portamento: 0
+    }
+).connect(lowpassL);
 
 //---Recorder
 const actx = Tone.context;
 const dest = actx.createMediaStreamDestination();
 const recorder = new MediaRecorder(dest.stream);
-synth.connect(dest);
-
-lowpass.connect(dest);
-monoSynth.connect(dest);
+synth.connect(dest)
 bandpass.connect(dest);
-
-
-cello.connect(dest);
+instrumentR.connect(dest);
+instrumentL.connect(dest);
