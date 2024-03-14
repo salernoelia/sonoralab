@@ -66,11 +66,12 @@ function scene4() {
       console.log("Stopped Recording:", chunks);
       saveAction();
       scene5Timer = false;
+      console.log("scene 5timer set to (false)", false);
       mode = 5;
       recorderStarted = false;
       console.log("Recorder Started is Deactivated (false)", recorderStarted);
     }
-  }, 30000);
+  }, 10000);
 
   calculateDistance();
   xR = map(rightHandIndexX.value, 1, 0, 0, window.innerWidth);
