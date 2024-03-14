@@ -21,7 +21,18 @@ let thumbX
 let thumbY
 let thumbZ
 
+let startTime;
+let timerHasStarted = false;
 
+let sceneMap = new Map();
+
+// Array containing scene names
+let sceneNames = ["scene1", "scene2", "scene3", "scene4", "scene5"];
+
+// Initialize the map with all scenes set to false
+sceneNames.forEach(sceneName => {
+  sceneMap.set(sceneName, false);
+});
 
 // ---WebSocket---
 
@@ -279,6 +290,8 @@ function drawCursors(){
 }
 
 function checkConditions() {
+
+  
   calculateDistance()
 
   if (
@@ -346,48 +359,74 @@ function checkConditions() {
     xLt = map(leftHandThumbX.value, 1, 0, 0, window.innerWidth);
     yLt = map(leftHandThumbY.value, 0, 1, 0, window.innerHeight);
 
-    if(mode === 1){
+    if(mode === 1 && sceneMap.get("scene1") === false){
       if(xR && yR || xL && yL) {
-        timer1 = setTimeout(function(){ 
+        sceneMap.set("scene1", true);
+
+        timer1 = setTimeout(function() { 
           mode = 2;
+
+          console.log("mode", mode, "IS scene 1 accomplished", sceneMap.get("scene1"))
+
         }, 2000);
         }    
       }
-    if(mode === 2){
-      if(xR && yR || xL && yL){
-        if (checkConditions() == true){
+    if(mode === 2 && sceneMap.get("scene1") === true){
+        
+      if(xR && yR || xL && yL ){
+
+        if (timerHasStarted === false) {
+        startTimer()
+        timerHasStarted = true;
+      }
+        
+        
+        if (millis() - startTime > 15000) {
+          mode = 1;
+        } else if (checkConditions()) {
+          sceneMap.set("scene2", true);
+
           mode = 3;
+          timerHasStarted = false;
+          startTime = 0;
+
         }
       }
     } 
-    if(mode === 3){
+    if(mode === 3 && sceneMap.get("scene1") === true && sceneMap.get("scene2") === true){
       timer1 = setTimeout(function(){ 
-            mode = 4;
             Tone.Transport.start();
             Tone.Transport.scheduleRepeat(setMelody, "4n");
             if (recorderStarted === false) {
               recorder.start();
               console.log("Recording");
             recorderStarted = true;
+            sceneMap.set("scene3", true);
+
+            mode = 4;
+
+
 
             }
       }, 30);
     }
-    if(mode === 4){
+    if(mode === 4 && sceneMap.get("scene1") === true && sceneMap.get("scene2") === true && sceneMap.get("scene3") === true){
       timer1 = setTimeout(function(){ 
+        sceneMap.set("scene4", true);
+
             mode = 5;
       }, 15000);
     }
-    if(mode === 5){
+    if(mode === 5 && sceneMap.get("scene1") === true && sceneMap.get("scene2") === true && sceneMap.get("scene3") === true && sceneMap.get("scene4") === true){
       if (recorderStarted === true) {
       recorder.stop();
-      recorderStarted = false;
       console.log("Stopped Recording:", chunks);
       saveAction();
-
+      recorderStarted = false;
       }
 
       timer1 = setTimeout(function(){ 
+        sceneMap.set("scene5", true);
         
             mode = 6;
             Tone.Transport.stop();
@@ -396,12 +435,17 @@ function checkConditions() {
           }, 5000);
           
     }
-    if(mode === 6){
+    if(mode === 6 && sceneMap.get("scene1") === true && sceneMap.get("scene2") === true && sceneMap.get("scene3") === true && sceneMap.get("scene4") === true && sceneMap.get("scene5") === true){
+      sceneNames.forEach(sceneName => {
+        sceneMap.set(sceneName, false);
+      });
       mode = 1;
-      return;
 
-  }
-  }
+
+  } 
+  return;
+
+}
 
 
 
@@ -489,4 +533,9 @@ const clearSketch = () => {
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
   background(backgroundColor);
+}
+
+function startTimer() {
+  console.log("Timer started");
+  startTime = millis();
 }
