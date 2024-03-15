@@ -40,7 +40,6 @@ sceneNames.forEach((sceneName) => {
 });
 
 // ---WebSocket---
-
 const ws = new WebSocket("ws://localhost:8081");
 
 ws.onopen = () => {
@@ -50,6 +49,13 @@ ws.onopen = () => {
 ws.onmessage = async function (event) {
   const parsedData = JSON.parse(event.data);
   // console.log(parsedData); // Check the received data structure
+  console.log(parsedData);
+
+  if (parsedData == "restart") {
+    console.log("Restarting the sketch");
+    location.reload();
+  }
+
   if (parsedData.hand === "none") {
     handsVisible.value = false;
     // console.log("No hands detected");

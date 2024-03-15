@@ -33,6 +33,21 @@ const supabase = useSupabaseClient();
 let merged = ref(false);
 let images = ref([]);
 
+const socket = new WebSocket("ws://localhost:8081");
+
+socket.onopen = function (e) {
+  console.log("Connected to WebSocket server", e);
+};
+
+socket.onmessage = function (event) {
+  let parsedMessage = JSON.parse(event.data);
+  console.log("Received message:", parsedMessage);
+  if (parsedMessage == "restart") {
+    reloadNuxtApp();
+    console.log("Reloading Nuxt App");
+  }
+};
+
 const route = useRoute();
 const id = ref(route.params.id);
 

@@ -41,6 +41,21 @@ const supabase = useSupabaseClient();
 const images = ref([]);
 let metadata = ref([]);
 
+const socket = new WebSocket("ws://localhost:8081");
+
+socket.onopen = function (e) {
+  console.log("Connected to WebSocket server", e);
+};
+
+socket.onmessage = function (event) {
+  let parsedMessage = JSON.parse(event.data);
+  console.log("Received message:", parsedMessage);
+  if (parsedMessage == "restart") {
+    reloadNuxtApp();
+    console.log("Reloading Nuxt App");
+  }
+};
+
 const fetchMeta = async () => {
   console.log("Fetching Metadata...");
   const { data: metadata, error } = await supabase
@@ -140,8 +155,7 @@ body:-webkit-scrollbar {
 
   &:hover {
     //dropshadow
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.3),
-      0 6px 20px 0 rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.3), 0 6px 20px 0 rgba(0, 0, 0, 0.3);
   }
 }
 
