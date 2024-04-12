@@ -14,7 +14,7 @@ Sonora Lab is a web application built for an installation, where you can draw an
 
 # Application Architecture
 
-![sonora-lab-architecture](sonora-lab-architecture.svg]
+![sonora-lab-architecture](sonora-lab-architecture.svg)
 
 Credits:
 Stepan Vedunov
